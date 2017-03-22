@@ -5,7 +5,14 @@ const addressProcessor = require('./addressProcessor');
 const paymentMethodProcessor = require('./paymentMethodProcessor');
 const subscriptionProcessor = require('./subscriptionProcessor');
 const transactionProcessor = require('./transactionProcessor');
-const { getOr, uniqBy, get, flatten, map, sortBy, reverse, curry } = require('lodash/fp');
+const getOr = require('lodash/fp/getOr');
+const uniqBy = require('lodash/fp/uniqBy');
+const get = require('lodash/fp/get');
+const flatten = require('lodash/fp/flatten');
+const map = require('lodash/fp/map');
+const sortBy = require('lodash/fp/sortBy');
+const reverse = require('lodash/fp/reverse');
+const curry = require('lodash/fp/curry');
 
 function processorFields(customer) {
     return {

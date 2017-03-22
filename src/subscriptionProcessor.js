@@ -1,20 +1,18 @@
 const ProcessorItem = require('mongoose-subscriptions').Schema.ProcessorItem;
 const Event = require('./Event');
 const transactionProcessor = require('./transactionProcessor');
-const {
-    pick,
-    pickBy,
-    identity,
-    flow,
-    filter,
-    map,
-    negate,
-    get,
-    isEmpty,
-    concat,
-    differenceBy,
-    curry,
-} = require('lodash/fp');
+const pick = require('lodash/fp/pick');
+const pickBy = require('lodash/fp/pickBy');
+const identity = require('lodash/fp/identity');
+const flow = require('lodash/fp/flow');
+const filter = require('lodash/fp/filter');
+const map = require('lodash/fp/map');
+const negate = require('lodash/fp/negate');
+const get = require('lodash/fp/get');
+const isEmpty = require('lodash/fp/isEmpty');
+const concat = require('lodash/fp/concat');
+const differenceBy = require('lodash/fp/differenceBy');
+const curry = require('lodash/fp/curry');
 
 function processorFieldsDiscounts(originalDiscounts, discounts) {
     const response = {

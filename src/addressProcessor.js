@@ -1,7 +1,7 @@
 const ProcessorItem = require('mongoose-subscriptions').Schema.ProcessorItem;
 const Event = require('./Event');
 const name = require('./name');
-const { curry } = require('lodash/fp');
+const curry = require('lodash/fp/curry');
 
 function processorFields(address) {
     return {

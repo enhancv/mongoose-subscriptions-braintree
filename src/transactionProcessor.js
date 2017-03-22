@@ -2,7 +2,11 @@ const ProcessorItem = require('mongoose-subscriptions').Schema.ProcessorItem;
 const Event = require('./Event');
 const name = require('./name');
 const addressProcessor = require('./addressProcessor');
-const { curry, pick, map, pickBy, identity } = require('lodash/fp');
+const curry = require('lodash/fp/curry');
+const pick = require('lodash/fp/pick');
+const map = require('lodash/fp/map');
+const pickBy = require('lodash/fp/pickBy');
+const identity = require('lodash/fp/identity');
 
 function fields(customer, braintreeTransaction) {
     const response = {
