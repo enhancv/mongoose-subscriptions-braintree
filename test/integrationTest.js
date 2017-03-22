@@ -1,6 +1,5 @@
 const assert = require('assert');
 const sinon = require('sinon');
-const braintree = require('braintree');
 const database = require('./database');
 const gateway = require('./gateway');
 const Schema = require('mongoose').Schema;
