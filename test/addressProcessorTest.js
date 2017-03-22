@@ -16,8 +16,7 @@ describe('addressProcessor', () => {
                 {
                     _id: 'one',
                     processor: { id: 'test-id', state: 'saved' },
-                    firstName: 'Pesho',
-                    lastName: 'Stanchev',
+                    name: 'Pesho Stanchev',
                 },
             ],
         });
@@ -137,6 +136,20 @@ describe('addressProcessor', () => {
                 sinon.assert.calledOnce(gateway.address.update);
                 sinon.assert.calledWith(gateway.address.update, '64601260', 'test-id', sinon.match.object);
                 assert.deepEqual('Example company', address.company);
+            });
+    });
+
+    it('save should be a noop if the state has not changed', function () {
+        const gateway = { };
+        const processor = {
+            gateway,
+            emit: sinon.spy(),
+        };
+
+        return addressProcessor.save(processor, this.customer, this.customer.addresses[0])
+            .then((customer) => {
+                assert.equal(customer, this.customer);
+                sinon.assert.neverCalledWith(processor.emit, 'event', sinon.match.has('name', 'address'));
             });
     });
 

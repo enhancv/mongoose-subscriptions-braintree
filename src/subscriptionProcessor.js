@@ -160,7 +160,7 @@ function save(processor, customer, subscription) {
         }
 
         if (subscription.processor.state === ProcessorItem.LOCAL) {
-            resolve(subscription);
+            resolve(customer);
         } else if (subscription.processor.state === ProcessorItem.CHANGED) {
             processor.emit('event', new Event(Event.SUBSCRIPTION, Event.UPDATING, data));
             processor.gateway.subscription.update(subscription.processor.id, data, callback);
@@ -168,7 +168,7 @@ function save(processor, customer, subscription) {
             processor.emit('event', new Event(Event.SUBSCRIPTION, Event.CREATING, data));
             processor.gateway.subscription.create(data, callback);
         } else {
-            resolve(subscription);
+            resolve(customer);
         }
     });
 }

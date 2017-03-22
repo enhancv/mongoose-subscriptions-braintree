@@ -107,7 +107,7 @@ function save(processor, customer, paymentMethod) {
             processor.emit('event', new Event(Event.PAYMENT_METHOD, Event.CREATING, data));
             processor.gateway.paymentMethod.create(data, callback);
         } else {
-            resolve(paymentMethod);
+            resolve(customer);
         }
     });
 }

@@ -66,7 +66,7 @@ function save(processor, customer, address) {
             processor.emit('event', new Event(Event.ADDRESS, Event.CREATING, data));
             processor.gateway.address.create(data, callback);
         } else {
-            resolve(address);
+            resolve(customer);
         }
     });
 }

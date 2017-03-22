@@ -9,6 +9,7 @@ describe('name', () => {
     });
 
     it('first name', () => {
+        assert.deepEqual(name.first(), '');
         assert.deepEqual(name.first('Pesho Peshev'), 'Pesho');
         assert.deepEqual(name.first('Pesho'), 'Pesho');
         assert.deepEqual(name.first('Pesho Peshev Stoinov'), 'Pesho');

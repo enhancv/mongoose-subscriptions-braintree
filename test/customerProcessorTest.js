@@ -96,6 +96,20 @@ describe('customerProcessor', () => {
             });
     });
 
+    it('save should be a noop if the state has not changed', function () {
+        const gateway = { };
+        const processor = {
+            gateway,
+            emit: sinon.spy(),
+        };
+
+        return customerProcessor.save(processor, this.customer)
+            .then((customer) => {
+                assert.equal(customer, this.customer);
+                sinon.assert.neverCalledWith(processor.emit, 'event', sinon.match.has('name', 'customer'));
+            });
+    });
+
     it('save should call update endpoint on existing address', function () {
         const gateway = {
             customer: {
@@ -771,6 +785,39 @@ describe('customerProcessor', () => {
                     customer.transactions.map(item => item._id),
                     result.paymentMethods[0].subscriptions[0].transactions.map(item => item.id)
                 );
+
+                return customerProcessor.load(processor, customer);
+            }).then((customer) => {
+                assert.equal(customer.paymentMethods[0].billingAddressId, customer.addresses[0]._id);
+                assert.equal(customer.subscriptions[0].paymentMethodId, customer.paymentMethods[0]._id);
+                assert.equal(customer.subscriptions[0].processor.id, result.paymentMethods[0].subscriptions[0].id);
+                assert.equal(customer.paymentMethods[0].processor.id, result.paymentMethods[0].token);
+
+                assert.deepEqual(
+                    customer.transactions.map(item => item._id),
+                    result.paymentMethods[0].subscriptions[0].transactions.map(item => item.id)
+                );
             });
     });
+
+    it('save should send a rejection on api error', function () {
+        const apiError = new Error('error');
+
+        const gateway = {
+            customer: {
+                find: sinon.stub().callsArgWith(1, apiError),
+            },
+        };
+        const processor = {
+            gateway,
+            emit: sinon.spy(),
+        };
+
+        return customerProcessor.load(processor, this.customer)
+            .catch((error) => {
+                sinon.assert.neverCalledWith(processor.emit, 'event', sinon.match.has('action', 'loaded'));
+                assert.equal(error, apiError);
+            });
+    });
+
 });

@@ -468,6 +468,40 @@ describe('subscriptionProcessor', database([Customer, Plan], () => {
             });
     });
 
+    it('save should be a noop if the state has not changed', function () {
+        const gateway = { };
+        const processor = {
+            gateway,
+            emit: sinon.spy(),
+        };
+
+        return this.customer
+            .save()
+            .then(customer => subscriptionProcessor.save(processor, customer, customer.subscriptions[0]))
+            .then((customer) => {
+                assert.equal(customer, this.customer);
+                sinon.assert.neverCalledWith(processor.emit, 'event', sinon.match.has('name', 'subscription'));
+            });
+    });
+
+    it('save should be a noop if the state is "local"', function () {
+        const gateway = { };
+        const processor = {
+            gateway,
+            emit: sinon.spy(),
+        };
+
+        this.customer.subscriptions[0].processor.state = ProcessorItem.LOCAL;
+
+        return this.customer
+            .save()
+            .then(customer => subscriptionProcessor.save(processor, customer, customer.subscriptions[0]))
+            .then((customer) => {
+                assert.equal(customer, this.customer);
+                sinon.assert.neverCalledWith(processor.emit, 'event', sinon.match.has('name', 'subscription'));
+            });
+    });
+
     it('save should call update endpoint on existing subscription', function () {
         const gateway = {
             subscription: {

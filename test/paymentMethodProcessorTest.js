@@ -276,6 +276,20 @@ describe('paymentMethodProcessor', () => {
             });
     });
 
+    it('save should be a noop if the state has not changed', function () {
+        const gateway = { };
+        const processor = {
+            gateway,
+            emit: sinon.spy(),
+        };
+
+        return paymentMethodProcessor.save(processor, this.customer, this.customer.paymentMethods[0])
+            .then((customer) => {
+                assert.equal(customer, this.customer);
+                sinon.assert.neverCalledWith(processor.emit, 'event', sinon.match.has('name', 'paymentMethod'));
+            });
+    });
+
     it('save should send a rejection on api error', function () {
         const apiError = new Error('error');
 
