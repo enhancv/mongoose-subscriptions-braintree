@@ -10,8 +10,7 @@ const uniqBy = require('lodash/fp/uniqBy');
 const get = require('lodash/fp/get');
 const flatten = require('lodash/fp/flatten');
 const map = require('lodash/fp/map');
-const sortBy = require('lodash/fp/sortBy');
-const reverse = require('lodash/fp/reverse');
+const orderBy = require('lodash/fp/orderBy');
 const curry = require('lodash/fp/curry');
 
 function processorFields(customer) {
@@ -100,7 +99,7 @@ function load(processor, customer) {
                 Object.assign(customer, fields(customerResult));
 
                 const subscriptionsResult = extractFromCollection('subscriptions', customerResult.paymentMethods);
-                const transactionsResult = reverse(sortBy(get('createdAt'), extractFromCollection('transactions', subscriptionsResult)));
+                const transactionsResult = orderBy('desc', 'createdAt', extractFromCollection('transactions', subscriptionsResult));
 
                 mergeCollection(
                     customer.addresses,
