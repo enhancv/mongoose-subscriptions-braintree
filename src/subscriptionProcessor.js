@@ -46,7 +46,10 @@ function processorFields(customer, subscription) {
     ProcessorItem.validateIsSaved(subscription.plan);
 
     const paymentMethod = customer.paymentMethods.id(subscription.paymentMethodId);
-    const processorDiscounts = processorFieldsDiscounts(subscription.original.discounts, subscription.discounts);
+    const processorDiscounts = processorFieldsDiscounts(
+        subscription.original.discounts,
+        subscription.discounts
+    );
 
     const response = {
         planId: subscription.plan.processor.id,
@@ -97,7 +100,10 @@ function fields(customer, originalDiscounts, subscription) {
         discounts: fieldsDiscounts(originalDiscounts, subscription.discounts),
         firstBillingDate: subscription.firstBillingDate,
         nextBillingDate: subscription.nextBillingDate,
-        paymentMethodId: ProcessorItem.getId(subscription.paymentMethodToken, customer.paymentMethods),
+        paymentMethodId: ProcessorItem.getId(
+            subscription.paymentMethodToken,
+            customer.paymentMethods
+        ),
     };
 
     return pickBy(identity, response);

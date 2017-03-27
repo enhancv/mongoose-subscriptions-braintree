@@ -1,4 +1,4 @@
-const ProcessorItem = require('mongoose-subscriptions').Schema.ProcessorItem;
+const main = require('mongoose-subscriptions');
 const Event = require('./Event');
 const name = require('./name');
 const addressProcessor = require('./addressProcessor');
@@ -12,6 +12,10 @@ const flatten = require('lodash/fp/flatten');
 const map = require('lodash/fp/map');
 const orderBy = require('lodash/fp/orderBy');
 const curry = require('lodash/fp/curry');
+const set = require('lodash/fp/set');
+
+const ProcessorItem = main.Schema.ProcessorItem;
+const Plan = main.Plan;
 
 function processorFields(customer) {
     return {
@@ -73,16 +77,16 @@ function extractFromCollection(innerName, collection) {
 }
 
 function mergeCollection(collection, braintreeCollection, customizer) {
-    braintreeCollection.forEach((braintreeItem) => {
+    return Promise.all(braintreeCollection.map((braintreeItem) => {
         const index = collection.findIndex(item => item.processor.id === braintreeItem.id);
 
         if (index !== -1) {
-            Object.assign(collection[index], customizer(braintreeItem, collection[index]));
-        } else {
-            collection.push(customizer(braintreeItem));
+            return customizer(braintreeItem, collection[index])
+                .then(item => Object.assign(collection[index], item));
         }
-    });
-    return collection;
+
+        return customizer(braintreeItem).then(item => collection.push(item));
+    }));
 }
 
 function load(processor, customer) {
@@ -98,34 +102,61 @@ function load(processor, customer) {
                 processor.emit('event', new Event(Event.CUSTOMER, Event.LOADED, customerResult));
                 Object.assign(customer, fields(customerResult));
 
-                const subscriptionsResult = extractFromCollection('subscriptions', customerResult.paymentMethods);
-                const transactionsResult = orderBy('desc', 'createdAt', extractFromCollection('transactions', subscriptionsResult));
+                const subscriptionsResult = extractFromCollection(
+                    'subscriptions',
+                    customerResult.paymentMethods
+                );
+
+                const transactionsResult = orderBy(
+                    'desc',
+                    'createdAt',
+                    extractFromCollection(
+                        'transactions',
+                        subscriptionsResult
+                    )
+                );
 
                 mergeCollection(
                     customer.addresses,
                     customerResult.addresses,
-                    addressProcessor.fields
-                );
-
-                mergeCollection(
+                    address => Promise.resolve(
+                        addressProcessor.fields(address)
+                    )
+                )
+                .then(() => mergeCollection(
                     customer.paymentMethods,
                     customerResult.paymentMethods,
-                    paymentMethodProcessor.fields(customer)
-                );
-
-                mergeCollection(
+                    paymentMethod => Promise.resolve(
+                        paymentMethodProcessor.fields(customer, paymentMethod)
+                    )
+                ))
+                .then(() => mergeCollection(
                     customer.subscriptions,
                     subscriptionsResult,
-                    (subscription, original) => subscriptionProcessor.fields(customer, getOr([], 'discounts', original), subscription)
-                );
+                    (subscription, original) => {
+                        const getPlan = get('plan', original)
+                            ? Promise.resolve(original)
+                            : Plan.findOne({ 'processor.id': subscription.planId });
 
-                mergeCollection(
+                        return getPlan.then((plan) => {
+                            const item = subscriptionProcessor.fields(
+                                customer,
+                                getOr([], 'discounts', original),
+                                subscription
+                            );
+
+                            return set('plan', plan, item);
+                        });
+                    }
+                ))
+                .then(() => mergeCollection(
                     customer.transactions,
                     transactionsResult,
-                    transactionProcessor.fields(customer)
-                );
-
-                resolve(customer);
+                    transaction => Promise.resolve(
+                        transactionProcessor.fields(customer, transaction)
+                    )
+                ))
+                .then(() => resolve(customer));
             }
         });
     });

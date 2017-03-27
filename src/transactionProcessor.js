@@ -17,7 +17,10 @@ function fields(customer, braintreeTransaction) {
         },
         amount: braintreeTransaction.amount,
         refundedTransactionId: braintreeTransaction.refundedTransactionId,
-        subscriptionId: ProcessorItem.getId(braintreeTransaction.subscriptionId, customer.subscriptions),
+        subscriptionId: ProcessorItem.getId(
+            braintreeTransaction.subscriptionId,
+            customer.subscriptions
+        ),
         planProcessorId: braintreeTransaction.planId,
         billing: braintreeTransaction.billing
             ? addressProcessor.fields(braintreeTransaction.billing)

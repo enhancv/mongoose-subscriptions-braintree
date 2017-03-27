@@ -21,7 +21,7 @@ describe('Customer', database([Customer, Plan, Coupon], () => {
 
         processor.on('event', eventSpy);
 
-        return Plan.sync(processor)
+        return Plan.loadProcessor(processor)
             .then((plans) => {
                 plan = plans[1];
 
@@ -65,7 +65,7 @@ describe('Customer', database([Customer, Plan, Coupon], () => {
                     subscriptions: [
                         {
                             _id: 'four',
-                            plan,
+                            plan: plan,
                             status: 'Active',
                             descriptor: {
                                 name: 'Enhancv*Pro Plan',

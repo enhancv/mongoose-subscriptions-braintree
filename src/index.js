@@ -1,4 +1,4 @@
-const EventEmitter = require('events');
+const AbstractProcessor = require('mongoose-subscriptions').AbstractProcessor;
 const planProcessor = require('./planProcessor');
 const customerProcessor = require('./customerProcessor');
 const addressProcessor = require('./addressProcessor');
@@ -6,7 +6,7 @@ const paymentMethodProcessor = require('./paymentMethodProcessor');
 const subscriptionProcessor = require('./subscriptionProcessor');
 const transactionProcessor = require('./transactionProcessor');
 
-class BraintreeProcessor extends EventEmitter {
+class BraintreeProcessor extends AbstractProcessor {
     constructor(gateway) {
         super();
         this.gateway = gateway;
