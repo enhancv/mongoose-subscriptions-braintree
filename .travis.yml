@@ -1,12 +1,27 @@
 language: node_js
 services: mongodb
+addons:
+  code_climate:
+    repo_token: 32d255d79fc556e0b47516b1172b39b4b1d07ed8aed2217bb24e86a283a9dce0
 node_js: 6
 cache:
   directories:
-    - node_modules
+  - node_modules
 script:
-  - yarn lint
-  - yarn run coverage
+- yarn lint
+- yarn run coverage
 after_script:
-  - npm install -g codeclimate-test-reporter
-  - codeclimate-test-reporter < coverage/lcov.info
+- npm install -g codeclimate-test-reporter
+- codeclimate-test-reporter < coverage/lcov.info
+deploy:
+  provider: npm
+  email: ikerin@gmail.com
+  api_key:
+    secure: o/PDHj7ThrbinmFp/18Ytx3TXwS6vtSRbYvZiqtjFQTQ9nr5t5LATEp+ziu3lR+PtjWaT7wlOU5guM2/xiyPv40BLrJNqPDUF4Lw4CT73lkVvFXNBdFtBbGQB88ev79j0gpHqSA8VSjMRgrzWOlsZ67p4SOf0U3jKwxXeVN2hwGwgG22Nrb3iESympvQyrVCkWIDlmzIu1lXQ1A7lp17WH73vcFhtDbH9telH8en4dkJzODS++FEDSzBQYavYqhIuuc9xAociTzTkFRoF36OkiDG3zsAU8+fsV21rY+bZNZP1SZTczuaEwQoPL/YwskBX+ZGLUV0EBcWCrP4ccDnmUrVp2ietl/AvFSy/tZ+Czlde41fOsJjuqaIYIxprt4tZbmpdOpXZd4Dsq+RB3QIkeZsk426PzDWyS7POchNCzMwueRkf9kcX+q8dfLiTd9JalN0TFANOxEVNUy91OX0CQxjB4zG/lMoH2Pt9rge8rzGpCz3ZonqsV1/pVogQJGL4QY4Fyt9IjnjiAERHBOhfCDoTKrCYPqKI1sBKDUVvJ/ycggmpXGCq5/WDduFV2cuZimah90hk+aE/W00qS2Fr2AgFkTHhQRrJMFpRmfjKPBiCtVLCXyKRHkCDL6FHUWQHH46l+37VgdKPh9ieUqs3rTAYF4A9lTMZSAviOjHEIg=
+  on:
+    tags: true
+    repo: enhancv/mongoose-subscriptions-braintree
+notifications:
+  email: false
+  slack:
+    secure: Q61hQyFwTuDewv58RCELl6gNiO29VJQBkwOFGw0Jjj5iQOd2bIiY4eX1gvtduHel3fYnlglMyIOpmGL5a7uOPJMLjJ2SRCzlzEHe4Yhf+dqXPnfoBtzUSrzWc3boFXs3pvJOxz6SMWKpDnqjwYcgJu+MqQf4tesMPnk0msMWN+j8oIDLueE195P5wfgmnXLaDKkz7SJOYp9iSbhtGh5Bs5EKJfORuq32TWNnNtLsdHVTs1h2D6WjO5z72eeHjFISX2Zpt+dCow8zeyuI5ABXCkMUZsbn1LUdFX5fV9tUgueOv8KZfQkI34VP+jj+IyNQq1K3ylva60jVY+dDJ6z5JwKN7ArV0Elwhikn5Bcs4EDCpL8mwViSmHf1QEg77RwUDgFC4WfvsbfpF2aRqS82BPp0O2x2DjRFsLxcudMLVDI3klj8ClTZG1vLz0Tkbwxh8Uky5j2KqcZOcKt7/l1ZJOv6/NfHfxhW+1f9yOxPUzioBELWn6BBNVL5ULwbPbyFBsrlpC+e3W6kD1j+B6a79txJ7QutKWgQT4DyJweUim6J1ZZ8EWobwp0MWaM2kIxXPp+4KGHYV08dLvTaLht0/7Nt4JymYz/cruAeKha8ascxmcvcejHMdH01JTAeoZwvhvJ92sm2WzO2p4UWGUZQTs0rNettT6SmuWQaU8Y0nXk=
