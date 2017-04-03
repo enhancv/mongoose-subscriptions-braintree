@@ -41,7 +41,6 @@ function fields(customer, braintreeTransaction) {
         createdAt: braintreeTransaction.createdAt,
         updatedAt: braintreeTransaction.updatedAt,
         discounts: map(discount => ({
-            __t: discount.id,
             amount: discount.amount,
             name: discount.name,
         }), braintreeTransaction.discounts),

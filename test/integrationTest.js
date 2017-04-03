@@ -204,7 +204,6 @@ describe('Customer', database([Customer, Plan, Coupon], () => {
                             transactionDiscountObject,
                             {
                                 amount: 1.49,
-                                __t: 'DiscountCoupon',
                                 name: 'DiscountCoupon',
                             }
                         );

@@ -280,7 +280,6 @@ describe('transactionProcessor', () => {
             discounts: [
                 {
                     amount: 0.00,
-                    __t: 'promocode',
                     name: 'Signup promocode',
                 },
             ],
