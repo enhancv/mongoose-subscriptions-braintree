@@ -937,23 +937,20 @@ mongodb@2.2.25:
     mongodb-core "2.1.9"
     readable-stream "2.1.5"
 
-mongoose-originals@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/mongoose-originals/-/mongoose-originals-1.0.0.tgz#2fda7cebc64831e684dc35d7f7294fb7cf69e81e"
-  dependencies:
-    mongoose "^4.8.4"
+mongoose-originals@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/mongoose-originals/-/mongoose-originals-1.0.1.tgz#bd8c94cd87da474c64b303dee62e56c3f158df38"
 
-mongoose-subscriptions@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/mongoose-subscriptions/-/mongoose-subscriptions-1.1.0.tgz#312314726fb9274797ff4a2e413791dde3b6201a"
+mongoose-subscriptions@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/mongoose-subscriptions/-/mongoose-subscriptions-1.2.2.tgz#1739a6dd2de5978cf9ca962f22684f2c8c06d1dc"
   dependencies:
-    mongoose "^4.8.4"
-    mongoose-originals "^1.0.0"
+    mongoose-originals "^1.0.1"
     shortid "^2.2.8"
 
-mongoose@^4.8.4:
-  version "4.9.1"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-4.9.1.tgz#e621d9e7356f46d1e39980a71063857405fa9099"
+mongoose@^4.8:
+  version "4.9.3"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-4.9.3.tgz#7e3ea176ed7d3d23940368704834890595aea040"
   dependencies:
     async "2.1.4"
     bson "~1.0.4"
