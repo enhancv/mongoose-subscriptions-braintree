@@ -1,4 +1,5 @@
 const ProcessorItem = require('mongoose-subscriptions').Schema.ProcessorItem;
+const braintree = require('braintree');
 const Event = require('./Event');
 const transactionProcessor = require('./transactionProcessor');
 const pick = require('lodash/fp/pick');
@@ -162,7 +163,13 @@ function save(processor, customer, subscription) {
             }
         }
 
-        if (subscription.processor.state === ProcessorItem.LOCAL) {
+        if (
+            subscription.processor.state === ProcessorItem.CHANGED
+            && subscription.status === braintree.Subscription.Status.Canceled
+        ) {
+            processor.emit('event', new Event(Event.SUBSCRIPTION, Event.CANCELING, data));
+            processor.gateway.subscription.cancel(subscription.processor.id, callback);
+        } else if (subscription.processor.state === ProcessorItem.LOCAL) {
             resolve(customer);
         } else if (subscription.processor.state === ProcessorItem.CHANGED) {
             processor.emit('event', new Event(Event.SUBSCRIPTION, Event.UPDATING, data));

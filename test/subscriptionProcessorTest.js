@@ -464,6 +464,31 @@ describe('subscriptionProcessor', database([Customer], () => {
             });
     });
 
+    it('save should call cancel endpoint on subscription that changed to canceled', function () {
+        const gateway = {
+            subscription: {
+                cancel: sinon.stub().callsArgWith(1, null, this.subscriptionResult),
+            },
+        };
+        const processor = {
+            gateway,
+            emit: sinon.spy(),
+        };
+
+        this.customer.subscriptions[0].processor.state = ProcessorItem.CHANGED;
+        this.customer.subscriptions[0].status = 'Canceled';
+
+        return this.customer
+            .save()
+            .then(customer => subscriptionProcessor.save(processor, customer, customer.subscriptions[0]))
+            .then((customer) => {
+                const subscription = this.customer.subscriptions[0];
+
+                sinon.assert.calledWith(processor.emit, 'event', sinon.match.has('name', 'subscription').and(sinon.match.has('action', 'canceling')));
+                sinon.assert.calledOnce(gateway.subscription.cancel);
+            });
+    });
+
     it('save should call cancel endpoint on cancel subscription', function () {
         this.subscriptionResult.subscription.status = 'Canceled';
 
