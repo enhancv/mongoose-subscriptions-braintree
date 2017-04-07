@@ -1,18 +1,12 @@
 const main = require('mongoose-subscriptions');
 const Event = require('./Event');
+const BraintreeError = require('./BraintreeError');
 const name = require('./name');
 const addressProcessor = require('./addressProcessor');
 const paymentMethodProcessor = require('./paymentMethodProcessor');
 const subscriptionProcessor = require('./subscriptionProcessor');
 const transactionProcessor = require('./transactionProcessor');
-const getOr = require('lodash/fp/getOr');
-const uniqBy = require('lodash/fp/uniqBy');
-const get = require('lodash/fp/get');
-const flatten = require('lodash/fp/flatten');
-const map = require('lodash/fp/map');
-const orderBy = require('lodash/fp/orderBy');
-const curry = require('lodash/fp/curry');
-const set = require('lodash/fp/set');
+const { getOr, uniqBy, get, flatten, map, orderBy, curry, set } = require('lodash/fp');
 
 const ProcessorItem = main.Schema.ProcessorItem;
 
@@ -54,7 +48,7 @@ function save(processor, customer) {
                 processor.emit('event', new Event(Event.CUSTOMER, Event.SAVED, result));
                 resolve(Object.assign(customer, fields(result.customer)));
             } else {
-                reject(new Error(result.message));
+                reject(new BraintreeError(result));
             }
         }
 

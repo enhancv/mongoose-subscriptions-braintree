@@ -1,12 +1,9 @@
 const ProcessorItem = require('mongoose-subscriptions').Schema.ProcessorItem;
 const Event = require('./Event');
+const BraintreeError = require('./BraintreeError');
 const name = require('./name');
 const addressProcessor = require('./addressProcessor');
-const curry = require('lodash/fp/curry');
-const pick = require('lodash/fp/pick');
-const map = require('lodash/fp/map');
-const pickBy = require('lodash/fp/pickBy');
-const identity = require('lodash/fp/identity');
+const { curry, pick, map, pickBy, identity } = require('lodash/fp');
 
 function fields(customer, braintreeTransaction) {
     const response = {
@@ -104,7 +101,7 @@ function refund(processor, customer, transaction, amount) {
                 customer.transactions.unshift(fields(customer, result.transaction));
                 resolve(customer);
             } else {
-                reject(new Error(result.message));
+                reject(new BraintreeError(result));
             }
         }
 
