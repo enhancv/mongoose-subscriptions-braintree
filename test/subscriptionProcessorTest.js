@@ -3,12 +3,11 @@ const sinon = require('sinon');
 const database = require('./database');
 const mongoose = require('mongoose');
 const braintree = require('braintree');
-const Plan = require('mongoose-subscriptions').Plan;
 const Customer = require('mongoose-subscriptions').Customer;
 const ProcessorItem = require('mongoose-subscriptions').Schema.ProcessorItem;
 const subscriptionProcessor = require('../src/subscriptionProcessor');
 
-describe('subscriptionProcessor', database([Customer, Plan], () => {
+describe('subscriptionProcessor', database([Customer], () => {
     beforeEach(function () {
         this.subscriptionResult = {
             success: true,
@@ -80,13 +79,11 @@ describe('subscriptionProcessor', database([Customer, Plan], () => {
             },
         };
 
-        this.plan = new Plan({
-            processor: { id: 'test1', state: 'saved' },
-            name: 'Test',
+        this.plan = {
+            processorId: 'test1',
             price: 12,
-            currency: 'USD',
             billingFrequency: 1,
-        });
+        };
 
         this.customer = new Customer({
             name: 'Pesho',
@@ -415,7 +412,6 @@ describe('subscriptionProcessor', database([Customer, Plan], () => {
                 },
             ],
             price: 14.9,
-            planProcessorId: 'monthly',
             createdAt: '2016-09-29T16:12:26Z',
             updatedAt: '2016-09-30T12:25:18Z',
             paidThroughDate: '2016-10-28',
@@ -467,6 +463,56 @@ describe('subscriptionProcessor', database([Customer, Plan], () => {
                 assert.deepEqual(subscription.processor.toObject(), { id: 'gzsxjb', state: 'saved' });
             });
     });
+
+    it('save should call cancel endpoint on cancel subscription', function () {
+        this.subscriptionResult.subscription.status = 'Canceled';
+
+        const gateway = {
+            subscription: {
+                cancel: sinon.stub().callsArgWith(1, null, this.subscriptionResult),
+            },
+        };
+        const processor = {
+            gateway,
+            emit: sinon.spy(),
+        };
+
+        return this.customer
+            .save()
+            .then(customer => subscriptionProcessor.cancel(processor, customer, customer.subscriptions[0]))
+            .then((customer) => {
+                const subscription = this.customer.subscriptions[0];
+
+                sinon.assert.calledWith(processor.emit, 'event', sinon.match.has('name', 'subscription').and(sinon.match.has('action', 'canceling')));
+                sinon.assert.calledWith(processor.emit, 'event', sinon.match.has('name', 'subscription').and(sinon.match.has('action', 'canceled')));
+                sinon.assert.calledOnce(gateway.subscription.cancel);
+                assert.deepEqual(subscription.status, 'Canceled');
+            });
+    });
+
+    it('save should send a rejection on api error for cancel', function () {
+        const apiError = new Error('error');
+
+        const gateway = {
+            subscription: {
+                cancel: sinon.stub().callsArgWith(1, apiError),
+            },
+        };
+        const processor = {
+            gateway,
+            emit: sinon.spy(),
+        };
+
+        return this.customer
+            .save()
+            .then(customer => subscriptionProcessor.cancel(processor, customer, customer.subscriptions[0]))
+            .catch((error) => {
+                sinon.assert.calledWith(processor.emit, 'event', sinon.match.has('name', 'subscription').and(sinon.match.has('action', 'canceling')));
+                sinon.assert.neverCalledWith(processor.emit, 'event', sinon.match.has('action', 'canceled'));
+                assert.equal(error, apiError);
+            });
+    });
+
 
     it('save should be a noop if the state has not changed', function () {
         const gateway = { };

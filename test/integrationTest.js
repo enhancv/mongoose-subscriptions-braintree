@@ -5,38 +5,35 @@ const gateway = require('./gateway');
 const Schema = require('mongoose').Schema;
 const Customer = require('mongoose-subscriptions').Customer;
 const DiscountCoupon = require('mongoose-subscriptions').Schema.Discount.DiscountCoupon;
-const Plan = require('mongoose-subscriptions').Plan;
 const Coupon = require('mongoose-subscriptions').Coupon;
 const BraintreeProcessor = require('../src');
-const processor = new BraintreeProcessor(gateway);
 
-describe('Customer', database([Customer, Plan, Coupon], () => {
+const plan = {
+    price: 14.9,
+    billingFrequency: 1,
+    level: 1,
+    processorId: 'monthly',
+};
+const processor = new BraintreeProcessor(gateway, [plan]);
+
+describe('Customer', database([Customer, Coupon], () => {
     it('Should be able to instantiate a Customer', function () {
         this.timeout(20000);
 
         const eventSpy = sinon.spy();
-        let plan = null;
-        let coupon = null;
+        const coupon = new Coupon.CouponPercent({
+            name: 'Testing JKALSD',
+            numberOfBillingCycles: 2,
+            description: 'For testing purposes',
+            percent: '10',
+            usedCountMax: 2,
+        });
         let originalCustomer = null;
 
         processor.on('event', eventSpy);
 
-        return Plan.loadProcessor(processor)
-            .then((plans) => {
-                plan = plans[1];
-
-                coupon = new Coupon.CouponPercent({
-                    name: 'Testing JKALSD',
-                    numberOfBillingCycles: 2,
-                    description: 'For testing purposes',
-                    percent: '10',
-                    usedCountMax: 2,
-                });
-
-                return coupon.save();
-            }).then((testingCoupon) => {
-                coupon = testingCoupon;
-
+        return coupon.save()
+            .then(() => {
                 const customer = new Customer({
                     name: 'Pesho Peshev',
                     phone: '+35988911111',
@@ -156,20 +153,11 @@ describe('Customer', database([Customer, Plan, Coupon], () => {
                                 paidThroughDate: sinon.match.date,
                                 paymentMethodId: 'three',
                                 plan: {
-                                    name: 'Monthly',
                                     price: 14.9,
-                                    currency: 'USD',
-                                    description: '',
-                                    createdAt: sinon.match.date,
-                                    updatedAt: sinon.match.date,
                                     billingFrequency: 1,
                                     level: 1,
-                                    processor: {
-                                        id: 'monthly',
-                                        state: 'saved',
-                                    },
+                                    processorId: 'monthly',
                                 },
-                                planProcessorId: 'monthly',
                                 price: 14.9,
                                 processor: {
                                     id: sinon.match.string,
@@ -368,8 +356,6 @@ describe('Customer', database([Customer, Plan, Coupon], () => {
                         );
 
                         const events = [
-                            { name: 'plan', action: 'loading' },
-                            { name: 'plan', action: 'loaded' },
                             { name: 'customer', action: 'creating' },
                             { name: 'customer', action: 'saved' },
                             { name: 'address', action: 'creating' },
@@ -381,9 +367,9 @@ describe('Customer', database([Customer, Plan, Coupon], () => {
                             { name: 'subscription', action: 'canceling' },
                             { name: 'subscription', action: 'canceled' },
                             { name: 'transaction', action: 'refund' },
+                            { name: 'transaction', action: 'refunded' },
                             { name: 'transaction', action: 'refund' },
-                            { name: 'transaction', action: 'refund' },
-                            { name: 'transaction', action: 'refund' },
+                            { name: 'transaction', action: 'refunded' },
                             { name: 'customer', action: 'loading' },
                             { name: 'customer', action: 'loaded' },
                         ];

@@ -43,8 +43,6 @@ function processorFieldsDiscounts(originalDiscounts, discounts) {
 }
 
 function processorFields(customer, subscription) {
-    ProcessorItem.validateIsSaved(subscription.plan);
-
     const paymentMethod = customer.paymentMethods.id(subscription.paymentMethodId);
     const processorDiscounts = processorFieldsDiscounts(
         subscription.original.discounts,
@@ -52,7 +50,7 @@ function processorFields(customer, subscription) {
     );
 
     const response = {
-        planId: subscription.plan.processor.id,
+        planId: subscription.plan.processorId,
         paymentMethodToken: paymentMethod
             ? ProcessorItem.validateIsSaved(paymentMethod).processor.id
             : null,
@@ -89,7 +87,6 @@ function fields(customer, originalDiscounts, subscription) {
             id: subscription.id,
             state: ProcessorItem.SAVED,
         },
-        planProcessorId: subscription.planId,
         createdAt: subscription.createdAt,
         updatedAt: subscription.updatedAt,
         paidThroughDate: subscription.paidThroughDate,
@@ -110,8 +107,8 @@ function fields(customer, originalDiscounts, subscription) {
 }
 
 function cancel(processor, customer, subscription) {
-    ProcessorItem.validateIsSaved(customer);
-    ProcessorItem.validateIsSaved(subscription);
+    ProcessorItem.validateIsSaved(customer, 'Customer');
+    ProcessorItem.validateIsSaved(subscription, 'Subscription');
 
     return new Promise((resolve, reject) => {
         processor.emit('event', new Event(Event.SUBSCRIPTION, Event.CANCELING, subscription));

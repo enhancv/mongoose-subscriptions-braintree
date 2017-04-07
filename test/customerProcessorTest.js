@@ -767,8 +767,15 @@ describe('customerProcessor', () => {
                 find: sinon.stub().callsArgWith(1, null, result),
             },
         };
+        const plan = {
+            processorId: 'monthly',
+            price: 14.9,
+            level: 1,
+            billingFrequency: 1,
+        };
         const processor = {
             gateway,
+            plan: sinon.stub().returns(plan),
             emit: sinon.spy(),
         };
 

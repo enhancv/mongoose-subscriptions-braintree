@@ -550,4 +550,120 @@ describe('transactionProcessor', () => {
         const fields = transactionProcessor.fields(this.customer, this.transactionCreditCardRefunded);
         assert.deepEqual(fields, this.fieldsCreditCardRefunded);
     });
+
+    it('save should call refund endpoint on full refund transaction', function () {
+        const result = {
+            success: true,
+            transaction: this.transactionCreditCardRefunded,
+        };
+        const gateway = {
+            transaction: {
+                refund: sinon.stub().callsArgWith(1, null, result),
+            },
+        };
+        const processor = {
+            gateway,
+            emit: sinon.spy(),
+        };
+
+        this.customer.transactions.push(this.fieldsPayPal);
+
+        return transactionProcessor.refund(processor, this.customer, this.customer.transactions[0], null)
+            .then((customer) => {
+                const refunded = this.customer.transactions[0];
+                const expected = this.customer.transactions.create(this.fieldsCreditCardRefunded);
+
+                sinon.assert.calledWith(processor.emit, 'event', sinon.match.has('name', 'transaction').and(sinon.match.has('action', 'refund')));
+                sinon.assert.calledWith(processor.emit, 'event', sinon.match.has('name', 'transaction').and(sinon.match.has('action', 'refunded')));
+                sinon.assert.calledOnce(gateway.transaction.refund);
+
+                assert.deepEqual(refunded.toObject(), expected.toObject());
+            });
+    });
+
+    it('save should call refund endpoint on refund transaction with amount', function () {
+        const result = {
+            success: true,
+            transaction: this.transactionCreditCardRefunded,
+        };
+        const gateway = {
+            transaction: {
+                refund: sinon.stub().callsArgWith(2, null, result),
+            },
+        };
+        const processor = {
+            gateway,
+            emit: sinon.spy(),
+        };
+
+        this.customer.transactions.push(this.fieldsPayPal);
+
+        return transactionProcessor.refund(processor, this.customer, this.customer.transactions[0], 10)
+            .then((customer) => {
+                const refunded = this.customer.transactions[0];
+                const expected = this.customer.transactions.create(this.fieldsCreditCardRefunded);
+
+                sinon.assert.calledWith(processor.emit, 'event', sinon.match.has('name', 'transaction').and(sinon.match.has('action', 'refund')));
+                sinon.assert.calledWith(processor.emit, 'event', sinon.match.has('name', 'transaction').and(sinon.match.has('action', 'refunded')));
+                sinon.assert.calledOnce(gateway.transaction.refund);
+
+                assert.deepEqual(refunded.toObject(), expected.toObject());
+            });
+    });
+
+    it('save should reject on api failure for refund', function () {
+        const result = {
+            message: 'some error',
+        };
+        const gateway = {
+            transaction: {
+                refund: sinon.stub().callsArgWith(1, null, result),
+            },
+        };
+        const processor = {
+            gateway,
+            emit: sinon.spy(),
+        };
+
+        this.customer.transactions.push(this.fieldsPayPal);
+
+        return transactionProcessor.refund(processor, this.customer, this.customer.transactions[0], null)
+            .then(() => {
+                assert.ok(false, 'Should reject on api failure');
+            })
+            .catch((error) => {
+                sinon.assert.calledWith(processor.emit, 'event', sinon.match.has('name', 'transaction').and(sinon.match.has('action', 'refund')));
+                sinon.assert.neverCalledWith(processor.emit, 'event', sinon.match.has('name', 'transaction').and(sinon.match.has('action', 'refunded')));
+                sinon.assert.calledOnce(gateway.transaction.refund);
+
+                assert.equal(error.message, 'some error');
+            });
+    });
+
+    it('save should reject on api failure for refund', function () {
+        const apiError = new Error('error');
+        const gateway = {
+            transaction: {
+                refund: sinon.stub().callsArgWith(1, apiError),
+            },
+        };
+        const processor = {
+            gateway,
+            emit: sinon.spy(),
+        };
+
+        this.customer.transactions.push(this.fieldsPayPal);
+
+        return transactionProcessor.refund(processor, this.customer, this.customer.transactions[0], null)
+            .then(() => {
+                assert.ok(false, 'Should reject on api failure');
+            })
+            .catch((error) => {
+                sinon.assert.calledWith(processor.emit, 'event', sinon.match.has('name', 'transaction').and(sinon.match.has('action', 'refund')));
+                sinon.assert.neverCalledWith(processor.emit, 'event', sinon.match.has('name', 'transaction').and(sinon.match.has('action', 'refunded')));
+                sinon.assert.calledOnce(gateway.transaction.refund);
+
+                assert.equal(error, apiError);
+            });
+    });
 });

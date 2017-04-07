@@ -16,7 +16,7 @@ const CANCELING = 'canceling';
 const CANCELED = 'canceled';
 
 const REFUND = 'refund';
-const REFUNDED = 'refund';
+const REFUNDED = 'refunded';
 
 class Event {
     constructor(name, action, context) {

@@ -1,5 +1,4 @@
 const AbstractProcessor = require('mongoose-subscriptions').AbstractProcessor;
-const planProcessor = require('./planProcessor');
 const customerProcessor = require('./customerProcessor');
 const addressProcessor = require('./addressProcessor');
 const paymentMethodProcessor = require('./paymentMethodProcessor');
@@ -7,9 +6,10 @@ const subscriptionProcessor = require('./subscriptionProcessor');
 const transactionProcessor = require('./transactionProcessor');
 
 class BraintreeProcessor extends AbstractProcessor {
-    constructor(gateway) {
+    constructor(gateway, plans) {
         super();
         this.gateway = gateway;
+        this.plans = plans || [];
     }
 
     load(customer) {
@@ -38,8 +38,8 @@ class BraintreeProcessor extends AbstractProcessor {
             .refund(this, customer, customer.transactions.id(transactionId), amount);
     }
 
-    plans() {
-        return planProcessor.all(this);
+    plan(processorId) {
+        return this.plans.find(plan => plan.processorId === processorId);
     }
 }
 
