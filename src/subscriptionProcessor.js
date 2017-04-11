@@ -100,7 +100,6 @@ function fields(customer, originalDiscounts, subscription) {
         statusHistory: map(pick(['timestamp', 'status']), subscription.statusHistory),
         discounts: fieldsDiscounts(originalDiscounts, subscription.discounts),
         firstBillingDate: subscription.firstBillingDate,
-        nextBillingDate: subscription.nextBillingDate,
         paymentMethodId: ProcessorItem.getId(
             subscription.paymentMethodToken,
             customer.paymentMethods

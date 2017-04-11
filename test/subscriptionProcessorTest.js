@@ -433,7 +433,6 @@ describe('subscriptionProcessor', database([Customer], () => {
                 },
             ],
             firstBillingDate: '2016-09-29',
-            nextBillingDate: '2016-10-29',
         };
 
         assert.deepEqual(fields, expected);
