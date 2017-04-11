@@ -1,5 +1,4 @@
 const ProcessorItem = require('mongoose-subscriptions').Schema.ProcessorItem;
-const braintree = require('braintree');
 const Event = require('./Event');
 const BraintreeError = require('./BraintreeError');
 const name = require('./name');
@@ -22,7 +21,7 @@ function processorFields(customer, paymentMethod) {
 function fields(customer, paymentMethod) {
     const response = {};
 
-    if (paymentMethod instanceof braintree.CreditCard) {
+    if (paymentMethod.constructor.name === 'CreditCard') {
         Object.assign(response, {
             __t: 'CreditCard',
             maskedNumber: paymentMethod.maskedNumber,
@@ -33,14 +32,14 @@ function fields(customer, paymentMethod) {
             expirationMonth: paymentMethod.expirationMonth,
             expirationYear: paymentMethod.expirationYear,
         });
-    } else if (paymentMethod instanceof braintree.PayPalAccount) {
+    } else if (paymentMethod.constructor.name === 'PayPalAccount') {
         Object.assign(response, {
             __t: 'PayPalAccount',
             name: name.full(paymentMethod.payerInfo.firstName, paymentMethod.payerInfo.lastName),
             payerId: paymentMethod.payerInfo.payerId,
             email: paymentMethod.email,
         });
-    } else if (paymentMethod instanceof braintree.ApplePayCard) {
+    } else if (paymentMethod.constructor.name === 'ApplePayCard') {
         Object.assign(response, {
             __t: 'ApplePayCard',
             cardType: paymentMethod.cardType,
@@ -48,7 +47,7 @@ function fields(customer, paymentMethod) {
             expirationMonth: paymentMethod.expirationMonth,
             expirationYear: paymentMethod.expirationYear,
         });
-    } else if (paymentMethod instanceof braintree.AndroidPayCard) {
+    } else if (paymentMethod.constructor.name === 'AndroidPayCard') {
         Object.assign(response, {
             __t: 'AndroidPayCard',
             sourceCardLast4: paymentMethod.sourceCardLast4,
