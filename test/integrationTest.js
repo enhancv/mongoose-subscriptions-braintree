@@ -348,6 +348,7 @@ describe('Customer', database([Customer, Coupon], () => {
                         assert.equal(newCustomer.subscriptions[0].paymentMethodId, newCustomer.paymentMethods[0]._id);
                         assert.equal(newCustomer.subscriptions[0].processor.id, originalCustomer.subscriptions[0].processor.id);
                         assert.equal(newCustomer.paymentMethods[0].processor.id, originalCustomer.paymentMethods[0].processor.id);
+                        assert.equal(newCustomer.paymentMethods[0].__t, 'CreditCard');
 
                         assert.deepEqual(
                             newCustomer.transactions.map(item => item._id),

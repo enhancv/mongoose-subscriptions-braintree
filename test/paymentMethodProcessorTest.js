@@ -241,7 +241,7 @@ describe('paymentMethodProcessor', () => {
 
         this.customer.paymentMethods[0].processor = { id: null, state: ProcessorItem.INITIAL };
 
-        return paymentMethodProcessor.save(processor, this.customer, this.customer.paymentMethods[0])
+        return paymentMethodProcessor.save(processor, this.customer, this.customer.paymentMethods[0], 0)
             .then((customer) => {
                 const paymentMethod = this.customer.paymentMethods[0];
 
@@ -265,7 +265,7 @@ describe('paymentMethodProcessor', () => {
 
         this.customer.paymentMethods[0].processor.state = ProcessorItem.CHANGED;
 
-        return paymentMethodProcessor.save(processor, this.customer, this.customer.paymentMethods[0])
+        return paymentMethodProcessor.save(processor, this.customer, this.customer.paymentMethods[0], 0)
             .then((customer) => {
                 const paymentMethod = this.customer.paymentMethods[0];
 
@@ -283,7 +283,7 @@ describe('paymentMethodProcessor', () => {
             emit: sinon.spy(),
         };
 
-        return paymentMethodProcessor.save(processor, this.customer, this.customer.paymentMethods[0])
+        return paymentMethodProcessor.save(processor, this.customer, this.customer.paymentMethods[0], 0)
             .then((customer) => {
                 assert.equal(customer, this.customer);
                 sinon.assert.neverCalledWith(processor.emit, 'event', sinon.match.has('name', 'paymentMethod'));
@@ -305,7 +305,7 @@ describe('paymentMethodProcessor', () => {
 
         this.customer.paymentMethods[0].processor.state = ProcessorItem.CHANGED;
 
-        return paymentMethodProcessor.save(processor, this.customer, this.customer.paymentMethods[0])
+        return paymentMethodProcessor.save(processor, this.customer, this.customer.paymentMethods[0], 0)
             .catch((error) => {
                 sinon.assert.neverCalledWith(processor.emit, 'event', sinon.match.has('action', 'saved'));
                 assert.equal(error, apiError);
@@ -325,7 +325,7 @@ describe('paymentMethodProcessor', () => {
 
         this.customer.paymentMethods[0].processor.state = ProcessorItem.CHANGED;
 
-        return paymentMethodProcessor.save(processor, this.customer, this.customer.paymentMethods[0])
+        return paymentMethodProcessor.save(processor, this.customer, this.customer.paymentMethods[0], 0)
             .catch((error) => {
                 sinon.assert.neverCalledWith(processor.emit, 'event', sinon.match.has('action', 'saved'));
                 assert.equal(error.message, 'some error');

@@ -74,7 +74,7 @@ function fields(customer, paymentMethod) {
     return pickBy(identity, response);
 }
 
-function save(processor, customer, paymentMethod) {
+function save(processor, customer, paymentMethod, index) {
     const data = processorFields(customer, paymentMethod);
 
     return new Promise((resolve, reject) => {
@@ -84,11 +84,12 @@ function save(processor, customer, paymentMethod) {
             } else if (result.success) {
                 processor.emit('event', new Event(Event.PAYMENT_METHOD, Event.SAVED, result));
 
-                Object.assign(
-                    paymentMethod,
+                customer.paymentMethods[index] = customer.paymentMethods.create(Object.assign(
+                    paymentMethod.toObject(),
                     fields(customer, result.paymentMethod),
                     { nonce: null }
-                );
+                ));
+                customer.markModified(`paymentMethods.${index}`);
 
                 resolve(customer);
             } else {
