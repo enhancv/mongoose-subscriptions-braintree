@@ -77,7 +77,7 @@ describe('customerProcessor', () => {
     it('save should call create endpoint on new address', function () {
         const gateway = {
             customer: {
-                create: sinon.stub().callsArgWith(1, null, this.customerResult),
+                create: sinon.stub().resolves(this.customerResult),
             },
         };
         const processor = {
@@ -113,7 +113,7 @@ describe('customerProcessor', () => {
     it('save should call update endpoint on existing address', function () {
         const gateway = {
             customer: {
-                update: sinon.stub().callsArgWith(2, null, this.customerResult),
+                update: sinon.stub().resolves(this.customerResult),
             },
         };
         const processor = {
@@ -137,7 +137,7 @@ describe('customerProcessor', () => {
 
         const gateway = {
             customer: {
-                update: sinon.stub().callsArgWith(2, apiError),
+                update: sinon.stub().rejects(apiError),
             },
         };
         const processor = {
@@ -157,7 +157,7 @@ describe('customerProcessor', () => {
     it('save should send a rejection on api result failure', function () {
         const gateway = {
             customer: {
-                update: sinon.stub().callsArgWith(2, null, { success: false, message: 'some error' }),
+                update: sinon.stub().resolves({ success: false, message: 'some error' }),
             },
         };
         const processor = {
@@ -764,7 +764,7 @@ describe('customerProcessor', () => {
 
         const gateway = {
             customer: {
-                find: sinon.stub().callsArgWith(1, null, result),
+                find: sinon.stub().resolves(result),
             },
         };
         const plan = {
@@ -812,7 +812,7 @@ describe('customerProcessor', () => {
 
         const gateway = {
             customer: {
-                find: sinon.stub().callsArgWith(1, apiError),
+                find: sinon.stub().rejects(apiError),
             },
         };
         const processor = {

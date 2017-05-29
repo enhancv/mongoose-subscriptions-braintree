@@ -96,7 +96,7 @@ describe('addressProcessor', () => {
     it('save should call create endpoint on new address', function () {
         const gateway = {
             address: {
-                create: sinon.stub().callsArgWith(1, null, this.addressResult),
+                create: sinon.stub().resolves(this.addressResult),
             },
         };
         const processor = {
@@ -119,7 +119,7 @@ describe('addressProcessor', () => {
     it('save should call update endpoint on existing address', function () {
         const gateway = {
             address: {
-                update: sinon.stub().callsArgWith(3, null, this.addressResult),
+                update: sinon.stub().resolves(this.addressResult),
             },
         };
         const processor = {
@@ -158,7 +158,7 @@ describe('addressProcessor', () => {
 
         const gateway = {
             address: {
-                update: sinon.stub().callsArgWith(3, apiError),
+                update: sinon.stub().rejects(apiError),
             },
         };
         const processor = {
@@ -178,7 +178,7 @@ describe('addressProcessor', () => {
     it('save should send a rejection on api result failure', function () {
         const gateway = {
             address: {
-                update: sinon.stub().callsArgWith(3, null, { success: false, message: 'some error' }),
+                update: sinon.stub().resolves({ success: false, message: 'some error' }),
             },
         };
         const processor = {

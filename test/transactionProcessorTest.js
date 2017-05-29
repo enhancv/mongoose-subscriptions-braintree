@@ -558,7 +558,7 @@ describe('transactionProcessor', () => {
         };
         const gateway = {
             transaction: {
-                refund: sinon.stub().callsArgWith(1, null, result),
+                refund: sinon.stub().resolves(result),
             },
         };
         const processor = {
@@ -588,7 +588,7 @@ describe('transactionProcessor', () => {
         };
         const gateway = {
             transaction: {
-                refund: sinon.stub().callsArgWith(2, null, result),
+                refund: sinon.stub().resolves(result),
             },
         };
         const processor = {
@@ -617,7 +617,7 @@ describe('transactionProcessor', () => {
         };
         const gateway = {
             transaction: {
-                refund: sinon.stub().callsArgWith(1, null, result),
+                refund: sinon.stub().resolves(result),
             },
         };
         const processor = {
@@ -644,7 +644,7 @@ describe('transactionProcessor', () => {
         const apiError = new Error('error');
         const gateway = {
             transaction: {
-                refund: sinon.stub().callsArgWith(1, apiError),
+                refund: sinon.stub().rejects(apiError),
             },
         };
         const processor = {

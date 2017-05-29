@@ -441,7 +441,7 @@ describe('subscriptionProcessor', database([Customer], () => {
     it('save should call create endpoint on new subscription', function () {
         const gateway = {
             subscription: {
-                create: sinon.stub().callsArgWith(1, null, this.subscriptionResult),
+                create: sinon.stub().resolves(this.subscriptionResult),
             },
         };
         const processor = {
@@ -466,7 +466,7 @@ describe('subscriptionProcessor', database([Customer], () => {
     it('save should call cancel endpoint on subscription that changed to canceled', function () {
         const gateway = {
             subscription: {
-                cancel: sinon.stub().callsArgWith(1, null, this.subscriptionResult),
+                cancel: sinon.stub().resolves(this.subscriptionResult),
             },
         };
         const processor = {
@@ -493,7 +493,7 @@ describe('subscriptionProcessor', database([Customer], () => {
 
         const gateway = {
             subscription: {
-                cancel: sinon.stub().callsArgWith(1, null, this.subscriptionResult),
+                cancel: sinon.stub().resolves(this.subscriptionResult),
             },
         };
         const processor = {
@@ -519,7 +519,7 @@ describe('subscriptionProcessor', database([Customer], () => {
 
         const gateway = {
             subscription: {
-                cancel: sinon.stub().callsArgWith(1, apiError),
+                cancel: sinon.stub().rejects(apiError),
             },
         };
         const processor = {
@@ -575,7 +575,7 @@ describe('subscriptionProcessor', database([Customer], () => {
     it('save should call update endpoint on existing subscription', function () {
         const gateway = {
             subscription: {
-                update: sinon.stub().callsArgWith(2, null, this.subscriptionResult),
+                update: sinon.stub().resolves(this.subscriptionResult),
             },
         };
         const processor = {
@@ -602,7 +602,7 @@ describe('subscriptionProcessor', database([Customer], () => {
 
         const gateway = {
             subscription: {
-                update: sinon.stub().callsArgWith(2, apiError),
+                update: sinon.stub().rejects(apiError),
             },
         };
         const processor = {
@@ -624,7 +624,7 @@ describe('subscriptionProcessor', database([Customer], () => {
     it('save should send a rejection on api result failure', function () {
         const gateway = {
             subscription: {
-                update: sinon.stub().callsArgWith(2, null, { success: false, message: 'some error' }),
+                update: sinon.stub().resolves({ success: false, message: 'some error' }),
             },
         };
         const processor = {

@@ -113,76 +113,74 @@ function cancel(processor, customer, subscription) {
     ProcessorItem.validateIsSaved(customer, 'Customer');
     ProcessorItem.validateIsSaved(subscription, 'Subscription');
 
-    return new Promise((resolve, reject) => {
-        processor.emit('event', new Event(Event.SUBSCRIPTION, Event.CANCELING, subscription));
-        processor.gateway.subscription.cancel(subscription.processor.id, (err, result) => {
-            if (err) {
-                reject(err);
-            } else {
-                processor.emit('event', new Event(Event.SUBSCRIPTION, Event.CANCELED, result));
-                Object.assign(
-                    subscription,
-                    fields(customer, subscription.discounts, result.subscription)
-                );
+    processor.emit('event', new Event(Event.SUBSCRIPTION, Event.CANCELING, subscription));
 
-                resolve(customer);
-            }
+    return processor.gateway.subscription
+        .cancel(subscription.processor.id)
+        .then((result) => {
+            processor.emit('event', new Event(Event.SUBSCRIPTION, Event.CANCELED, result));
+            Object.assign(
+                subscription,
+                fields(customer, subscription.discounts, result.subscription)
+            );
+
+            return customer;
         });
-    });
 }
 
 function save(processor, customer, subscription) {
     const data = processorFields(customer, subscription);
 
-    return new Promise((resolve, reject) => {
-        function callback(err, result) {
-            if (err) {
-                reject(err);
-            } else if (result.success) {
-                processor.emit('event', new Event(Event.SUBSCRIPTION, Event.SAVED, result));
+    function processSave (result) {
+        processor.emit('event', new Event(Event.SUBSCRIPTION, Event.SAVED, result));
 
-                Object.assign(
-                    subscription,
-                    fields(customer, subscription.discounts, result.subscription)
-                );
+        Object.assign(
+            subscription,
+            fields(customer, subscription.discounts, result.subscription)
+        );
 
-                const transactions = map(
-                    transactionProcessor.fields(customer),
-                    result.subscription.transactions
-                );
+        const transactions = map(
+            transactionProcessor.fields(customer),
+            result.subscription.transactions
+        );
 
-                const newTransactions = differenceBy(
-                    get('_id'),
-                    transactions,
-                    customer.transactions
-                );
+        const newTransactions = differenceBy(
+            get('_id'),
+            transactions,
+            customer.transactions
+        );
 
-                customer.transactions = concat(customer.transactions, newTransactions);
+        customer.transactions = concat(customer.transactions, newTransactions);
 
-                resolve(customer);
-            } else {
-                reject(new BraintreeError(result));
-            }
-        }
+        return customer;
+    }
 
-        if (
-            subscription.processor.state === ProcessorItem.CHANGED
-            && subscription.status === braintree.Subscription.Status.Canceled
-        ) {
-            processor.emit('event', new Event(Event.SUBSCRIPTION, Event.CANCELING, data));
-            processor.gateway.subscription.cancel(subscription.processor.id, callback);
-        } else if (subscription.processor.state === ProcessorItem.LOCAL) {
-            resolve(customer);
-        } else if (subscription.processor.state === ProcessorItem.CHANGED) {
-            processor.emit('event', new Event(Event.SUBSCRIPTION, Event.UPDATING, data));
-            processor.gateway.subscription.update(subscription.processor.id, data, callback);
-        } else if (subscription.processor.state === ProcessorItem.INITIAL) {
-            processor.emit('event', new Event(Event.SUBSCRIPTION, Event.CREATING, data));
-            processor.gateway.subscription.create(data, callback);
-        } else {
-            resolve(customer);
-        }
-    });
+    if (
+        subscription.processor.state === ProcessorItem.CHANGED
+        && subscription.status === braintree.Subscription.Status.Canceled
+    ) {
+        processor.emit('event', new Event(Event.SUBSCRIPTION, Event.CANCELING, data));
+        return processor.gateway.subscription
+            .cancel(subscription.processor.id)
+            .then(BraintreeError.guard)
+            .then(processSave);
+    } else if (subscription.processor.state === ProcessorItem.LOCAL) {
+        return Promise.resolve(customer);
+    } else if (subscription.processor.state === ProcessorItem.CHANGED) {
+        processor.emit('event', new Event(Event.SUBSCRIPTION, Event.UPDATING, data));
+        return processor.gateway.subscription
+            .update(subscription.processor.id, data)
+            .then(BraintreeError.guard)
+            .then(processSave);
+    } else if (subscription.processor.state === ProcessorItem.INITIAL) {
+        processor.emit('event', new Event(Event.SUBSCRIPTION, Event.CREATING, data));
+        return processor.gateway.subscription
+            .create(data)
+            .then(BraintreeError.guard)
+            .then(processSave);
+    } else {
+        return Promise.resolve(customer);
+    }
 }
 
 module.exports = {

@@ -1,6 +1,6 @@
 {
   "name": "mongoose-subscriptions-braintree",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "Braintree processor for mongoose-subscriptions",
   "main": "src/index.js",
   "repository": "git@github.com:enhancv/mongoose-subscriptions-braintree.git",
@@ -19,7 +19,7 @@
     "braintree": "^2.0"
   },
   "devDependencies": {
-    "braintree": "^2.0.2",
+    "braintree": "^2.1.1",
     "dotenv": "^4.0.0",
     "eslint": "^3.18.0",
     "eslint-config-airbnb-base": "^11.1.1",

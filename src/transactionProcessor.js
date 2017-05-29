@@ -91,28 +91,26 @@ function refund(processor, customer, transaction, amount) {
     ProcessorItem.validateIsSaved(customer);
     ProcessorItem.validateIsSaved(transaction);
 
-    return new Promise((resolve, reject) => {
-        function callback(err, result) {
-            if (err) {
-                reject(err);
-            } else if (result.success) {
-                processor.emit('event', new Event(Event.TRANSACTION, Event.REFUNDED, result));
+    function processRefund (result) {
+        processor.emit('event', new Event(Event.TRANSACTION, Event.REFUNDED, result));
 
-                customer.transactions.unshift(fields(customer, result.transaction));
-                resolve(customer);
-            } else {
-                reject(new BraintreeError(result));
-            }
-        }
+        customer.transactions.unshift(fields(customer, result.transaction));
+        return customer;
+    }
 
-        processor.emit('event', new Event(Event.TRANSACTION, Event.REFUND, amount));
+    processor.emit('event', new Event(Event.TRANSACTION, Event.REFUND, amount));
 
-        if (amount) {
-            processor.gateway.transaction.refund(transaction.processor.id, amount, callback);
-        } else {
-            processor.gateway.transaction.refund(transaction.processor.id, callback);
-        }
-    });
+    if (amount) {
+        return processor.gateway.transaction
+            .refund(transaction.processor.id, amount)
+            .then(BraintreeError.guard)
+            .then(processRefund);
+    } else {
+        return processor.gateway.transaction
+            .refund(transaction.processor.id)
+            .then(BraintreeError.guard)
+            .then(processRefund);
+    }
 }
 
 module.exports = {

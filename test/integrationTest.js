@@ -242,14 +242,14 @@ describe('Customer', database([Customer, Coupon], () => {
                         const transaction = customer.transactions[0];
 
                         assert.equal(subscription.status, 'Canceled');
-                        assert.equal(subscription.statusHistory.length, 2);
+                        assert.equal(subscription.statusHistory.length, 3);
 
-                        sinon.assert.match(subscription.statusHistory[0], {
+                        sinon.assert.match(subscription.statusHistory[1], {
                             timestamp: sinon.match.date,
                             status: 'Canceled',
                         });
 
-                        sinon.assert.match(subscription.statusHistory[1], {
+                        sinon.assert.match(subscription.statusHistory[2], {
                             timestamp: sinon.match.date,
                             status: 'Active',
                         });

@@ -40,36 +40,30 @@ function fields(address) {
 function save(processor, customer, address) {
     const data = processorFields(address);
 
-    return new Promise((resolve, reject) => {
-        function callback(err, result) {
-            if (err) {
-                reject(err);
-            } else if (result.success) {
-                processor.emit('event', new Event(Event.ADDRESS, Event.SAVED, result));
-                Object.assign(address, fields(result.address));
+    function processSave (result) {
+        processor.emit('event', new Event(Event.ADDRESS, Event.SAVED, result));
+        Object.assign(address, fields(result.address));
 
-                resolve(customer);
-            } else {
-                reject(new BraintreeError(result));
-            }
-        }
+        return customer;
+    }
 
-        if (address.processor.state === ProcessorItem.CHANGED) {
-            processor.emit('event', new Event(Event.ADDRESS, Event.UPDATING, data));
-            processor.gateway.address.update(
-                customer.processor.id,
-                address.processor.id,
-                data,
-                callback
-            );
-        } else if (address.processor.state === ProcessorItem.INITIAL) {
-            data.customerId = customer.processor.id;
-            processor.emit('event', new Event(Event.ADDRESS, Event.CREATING, data));
-            processor.gateway.address.create(data, callback);
-        } else {
-            resolve(customer);
-        }
-    });
+    if (address.processor.state === ProcessorItem.CHANGED) {
+        processor.emit('event', new Event(Event.ADDRESS, Event.UPDATING, data));
+        return processor.gateway.address
+            .update(customer.processor.id, address.processor.id, data)
+            .then(BraintreeError.guard)
+            .then(processSave);
+
+    } else if (address.processor.state === ProcessorItem.INITIAL) {
+        data.customerId = customer.processor.id;
+        processor.emit('event', new Event(Event.ADDRESS, Event.CREATING, data));
+        return processor.gateway.address
+            .create(data)
+            .then(BraintreeError.guard)
+            .then(processSave);
+    } else {
+        return Promise.resolve(customer);
+    }
 }
 
 module.exports = {

@@ -108,18 +108,17 @@ brace-expansion@^1.0.0:
     balanced-match "^0.4.1"
     concat-map "0.0.1"
 
-braintree@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/braintree/-/braintree-2.0.2.tgz#3c898c40404969f34d31e158fe0b17c09d7955f5"
+braintree@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/braintree/-/braintree-2.1.1.tgz#c8ecfad3914f1c42ed66e614455fe72f19d60b89"
   dependencies:
     dateformat "1.0.1-1.2.3"
     depd "~1.1.0"
     readable-stream "1.1.10"
     semver "5.1.0"
     underscore "1.8.3"
+    wrap-promise braintree/wrap-promise#1.1.0
     xml2js "0.1.13"
-  optionalDependencies:
-    source-map-support "0.2.9"
 
 browser-stdout@1.3.0:
   version "1.3.0"
@@ -1273,18 +1272,6 @@ sliced@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/sliced/-/sliced-1.0.1.tgz#0b3a662b5d04c3177b1926bea82b03f837a2ef41"
 
-source-map-support@0.2.9:
-  version "0.2.9"
-  resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.2.9.tgz#0bfb3bdae680f36b51815160bb950d0b17f4a248"
-  dependencies:
-    source-map "0.1.32"
-
-source-map@0.1.32:
-  version "0.1.32"
-  resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.1.32.tgz#c8b6c167797ba4740a8ea33252162ff08591b266"
-  dependencies:
-    amdefine ">=0.0.4"
-
 source-map@^0.4.4:
   version "0.4.4"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.4.4.tgz#eba4f5da9c0dc999de68032d8b4f76173652036b"
@@ -1436,6 +1423,10 @@ wordwrap@^1.0.0, wordwrap@~1.0.0:
 wordwrap@~0.0.2:
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/wordwrap/-/wordwrap-0.0.3.tgz#a3d5da6cd5c0bc0008d37234bbaf1bed63059107"
+
+wrap-promise@braintree/wrap-promise#1.1.0:
+  version "1.1.0"
+  resolved "https://codeload.github.com/braintree/wrap-promise/tar.gz/daa66452aa0d6fe9559be68e34e880ec52e8bf1f"
 
 wrappy@1:
   version "1.0.2"
