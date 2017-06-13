@@ -1,28 +1,28 @@
 function first(fullName) {
     if (fullName) {
-        const separator = fullName.indexOf(' ');
+        const separator = fullName.indexOf(" ");
         if (separator !== -1) {
             return fullName.substr(0, separator);
         }
         return fullName;
     }
 
-    return '';
+    return "";
 }
 
 function last(fullName) {
     if (fullName) {
-        const separator = fullName.indexOf(' ');
+        const separator = fullName.indexOf(" ");
         if (separator !== -1) {
             return fullName.substr(separator + 1).trim();
         }
     }
 
-    return '';
+    return "";
 }
 
 function full(firstName, lastName) {
-    return (`${firstName || ''} ${lastName || ''}`).trim();
+    return `${firstName || ""} ${lastName || ""}`.trim();
 }
 
 module.exports = {

@@ -1,8 +1,8 @@
-const ProcessorItem = require('mongoose-subscriptions').Schema.ProcessorItem;
-const Event = require('./Event');
-const BraintreeError = require('./BraintreeError');
-const name = require('./name');
-const { curry } = require('lodash/fp');
+const ProcessorItem = require("mongoose-subscriptions").Schema.ProcessorItem;
+const Event = require("./Event");
+const BraintreeError = require("./BraintreeError");
+const name = require("./name");
+const { curry } = require("lodash/fp");
 
 function processorFields(address) {
     return {
@@ -40,27 +40,23 @@ function fields(address) {
 function save(processor, customer, address) {
     const data = processorFields(address);
 
-    function processSave (result) {
-        processor.emit('event', new Event(Event.ADDRESS, Event.SAVED, result));
+    function processSave(result) {
+        processor.emit("event", new Event(Event.ADDRESS, Event.SAVED, result));
         Object.assign(address, fields(result.address));
 
         return customer;
     }
 
     if (address.processor.state === ProcessorItem.CHANGED) {
-        processor.emit('event', new Event(Event.ADDRESS, Event.UPDATING, data));
+        processor.emit("event", new Event(Event.ADDRESS, Event.UPDATING, data));
         return processor.gateway.address
             .update(customer.processor.id, address.processor.id, data)
             .then(BraintreeError.guard)
             .then(processSave);
-
     } else if (address.processor.state === ProcessorItem.INITIAL) {
         data.customerId = customer.processor.id;
-        processor.emit('event', new Event(Event.ADDRESS, Event.CREATING, data));
-        return processor.gateway.address
-            .create(data)
-            .then(BraintreeError.guard)
-            .then(processSave);
+        processor.emit("event", new Event(Event.ADDRESS, Event.CREATING, data));
+        return processor.gateway.address.create(data).then(BraintreeError.guard).then(processSave);
     } else {
         return Promise.resolve(customer);
     }
@@ -71,4 +67,3 @@ module.exports = {
     processorFields: curry(processorFields),
     save: curry(save),
 };
-

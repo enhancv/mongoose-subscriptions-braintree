@@ -1,5 +1,5 @@
-require('./dotenv');
-const mongoose = require('mongoose');
+require("./dotenv");
+const mongoose = require("mongoose");
 
 mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGO_URI);
@@ -10,7 +10,7 @@ function clearModels(models) {
 }
 
 function database(models, test) {
-    beforeEach('Clear models', () => clearModels(models));
+    beforeEach("Clear models", () => clearModels(models));
 
     return test;
 }

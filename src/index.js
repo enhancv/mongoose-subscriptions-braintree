@@ -1,9 +1,9 @@
-const AbstractProcessor = require('mongoose-subscriptions').AbstractProcessor;
-const customerProcessor = require('./customerProcessor');
-const addressProcessor = require('./addressProcessor');
-const paymentMethodProcessor = require('./paymentMethodProcessor');
-const subscriptionProcessor = require('./subscriptionProcessor');
-const transactionProcessor = require('./transactionProcessor');
+const AbstractProcessor = require("mongoose-subscriptions").AbstractProcessor;
+const customerProcessor = require("./customerProcessor");
+const addressProcessor = require("./addressProcessor");
+const paymentMethodProcessor = require("./paymentMethodProcessor");
+const subscriptionProcessor = require("./subscriptionProcessor");
+const transactionProcessor = require("./transactionProcessor");
 
 class BraintreeProcessor extends AbstractProcessor {
     constructor(gateway, plans) {
@@ -21,7 +21,8 @@ class BraintreeProcessor extends AbstractProcessor {
         const savePaymentMethod = paymentMethodProcessor.save(this, customer);
         const saveSubscription = subscriptionProcessor.save(this, customer);
 
-        return customerProcessor.save(this, customer)
+        return customerProcessor
+            .save(this, customer)
             .then(() => Promise.all(customer.addresses.map(saveAddress)))
             .then(() => Promise.all(customer.paymentMethods.map(savePaymentMethod)))
             .then(() => Promise.all(customer.subscriptions.map(saveSubscription)))
@@ -29,13 +30,20 @@ class BraintreeProcessor extends AbstractProcessor {
     }
 
     cancelSubscription(customer, subscriptionId) {
-        return subscriptionProcessor
-            .cancel(this, customer, customer.subscriptions.id(subscriptionId));
+        return subscriptionProcessor.cancel(
+            this,
+            customer,
+            customer.subscriptions.id(subscriptionId)
+        );
     }
 
     refundTransaction(customer, transactionId, amount) {
-        return transactionProcessor
-            .refund(this, customer, customer.transactions.id(transactionId), amount);
+        return transactionProcessor.refund(
+            this,
+            customer,
+            customer.transactions.id(transactionId),
+            amount
+        );
     }
 
     plan(processorId) {

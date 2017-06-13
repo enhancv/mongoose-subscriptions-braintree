@@ -6,12 +6,12 @@ class BraintreeError extends Error {
     }
 }
 
-BraintreeError.guard = function (result) {
+BraintreeError.guard = function(result) {
     if (!result || !result.success) {
         throw new BraintreeError(result);
     }
 
     return result;
-}
+};
 
 module.exports = BraintreeError;

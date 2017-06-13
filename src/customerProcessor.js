@@ -1,12 +1,12 @@
-const main = require('mongoose-subscriptions');
-const Event = require('./Event');
-const BraintreeError = require('./BraintreeError');
-const name = require('./name');
-const addressProcessor = require('./addressProcessor');
-const paymentMethodProcessor = require('./paymentMethodProcessor');
-const subscriptionProcessor = require('./subscriptionProcessor');
-const transactionProcessor = require('./transactionProcessor');
-const { getOr, uniqBy, get, flatten, map, orderBy, curry, set } = require('lodash/fp');
+const main = require("mongoose-subscriptions");
+const Event = require("./Event");
+const BraintreeError = require("./BraintreeError");
+const name = require("./name");
+const addressProcessor = require("./addressProcessor");
+const paymentMethodProcessor = require("./paymentMethodProcessor");
+const subscriptionProcessor = require("./subscriptionProcessor");
+const transactionProcessor = require("./transactionProcessor");
+const { getOr, uniqBy, get, flatten, map, orderBy, curry, set } = require("lodash/fp");
 
 const ProcessorItem = main.Schema.ProcessorItem;
 
@@ -40,23 +40,20 @@ function fields(customer) {
 function save(processor, customer) {
     const data = processorFields(customer);
 
-    function processSave (result) {
-        processor.emit('event', new Event(Event.CUSTOMER, Event.SAVED, result));
+    function processSave(result) {
+        processor.emit("event", new Event(Event.CUSTOMER, Event.SAVED, result));
         return Object.assign(customer, fields(result.customer));
     }
 
     if (customer.processor.state === ProcessorItem.CHANGED) {
-        processor.emit('event', new Event(Event.CUSTOMER, Event.UPDATING, data));
+        processor.emit("event", new Event(Event.CUSTOMER, Event.UPDATING, data));
         return processor.gateway.customer
             .update(customer.processor.id, data)
             .then(BraintreeError.guard)
             .then(processSave);
     } else if (customer.processor.state === ProcessorItem.INITIAL) {
-        processor.emit('event', new Event(Event.CUSTOMER, Event.CREATING, data));
-        return processor.gateway.customer
-            .create(data)
-            .then(BraintreeError.guard)
-            .then(processSave);
+        processor.emit("event", new Event(Event.CUSTOMER, Event.CREATING, data));
+        return processor.gateway.customer.create(data).then(BraintreeError.guard).then(processSave);
     } else {
         return Promise.resolve(customer);
     }
@@ -64,11 +61,11 @@ function save(processor, customer) {
 
 function extractFromCollection(innerName, collection) {
     const nested = map(get(innerName), collection);
-    return uniqBy(get('id'), flatten(nested));
+    return uniqBy(get("id"), flatten(nested));
 }
 
 function mergeCollection(collection, braintreeCollection, customizer) {
-    braintreeCollection.forEach((braintreeItem) => {
+    braintreeCollection.forEach(braintreeItem => {
         const index = collection.findIndex(item => item.processor.id === braintreeItem.id);
 
         if (index !== -1) {
@@ -81,63 +78,51 @@ function mergeCollection(collection, braintreeCollection, customizer) {
 
 function load(processor, customer) {
     ProcessorItem.validateIsSaved(customer);
-    processor.emit('event', new Event(Event.CUSTOMER, Event.LOADING, customer));
+    processor.emit("event", new Event(Event.CUSTOMER, Event.LOADING, customer));
 
-    return processor.gateway.customer.find(customer.processor.id)
-        .then((customerResult) => {
-            processor.emit('event', new Event(Event.CUSTOMER, Event.LOADED, customerResult));
-            Object.assign(customer, fields(customerResult));
+    return processor.gateway.customer.find(customer.processor.id).then(customerResult => {
+        processor.emit("event", new Event(Event.CUSTOMER, Event.LOADED, customerResult));
+        Object.assign(customer, fields(customerResult));
 
-            const subscriptionsResult = extractFromCollection(
-                'subscriptions',
-                customerResult.paymentMethods
+        const subscriptionsResult = extractFromCollection(
+            "subscriptions",
+            customerResult.paymentMethods
+        );
+
+        const transactionsResult = orderBy(
+            "desc",
+            "createdAt",
+            extractFromCollection("transactions", subscriptionsResult)
+        );
+
+        mergeCollection(customer.addresses, customerResult.addresses, addressProcessor.fields);
+
+        mergeCollection(
+            customer.paymentMethods,
+            customerResult.paymentMethods,
+            paymentMethodProcessor.fields(customer)
+        );
+
+        mergeCollection(customer.subscriptions, subscriptionsResult, (subscription, original) => {
+            const plan = processor.plan(subscription.planId);
+
+            const item = subscriptionProcessor.fields(
+                customer,
+                getOr([], "discounts", original),
+                subscription
             );
 
-            const transactionsResult = orderBy(
-                'desc',
-                'createdAt',
-                extractFromCollection(
-                    'transactions',
-                    subscriptionsResult
-                )
-            );
-
-            mergeCollection(
-                customer.addresses,
-                customerResult.addresses,
-                addressProcessor.fields
-            );
-
-            mergeCollection(
-                customer.paymentMethods,
-                customerResult.paymentMethods,
-                paymentMethodProcessor.fields(customer)
-            );
-
-            mergeCollection(
-                customer.subscriptions,
-                subscriptionsResult,
-                (subscription, original) => {
-                    const plan = processor.plan(subscription.planId);
-
-                    const item = subscriptionProcessor.fields(
-                        customer,
-                        getOr([], 'discounts', original),
-                        subscription
-                    );
-
-                    return set('plan', plan, item);
-                }
-            );
-
-            mergeCollection(
-                customer.transactions,
-                transactionsResult,
-                transactionProcessor.fields(customer)
-            );
-
-            return customer;
+            return set("plan", plan, item);
         });
+
+        mergeCollection(
+            customer.transactions,
+            transactionsResult,
+            transactionProcessor.fields(customer)
+        );
+
+        return customer;
+    });
 }
 
 module.exports = {
@@ -146,4 +131,3 @@ module.exports = {
     save: curry(save),
     load: curry(load),
 };
-

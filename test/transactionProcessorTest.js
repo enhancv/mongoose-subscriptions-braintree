@@ -1,69 +1,69 @@
-const assert = require('assert');
-const sinon = require('sinon');
-const Customer = require('mongoose-subscriptions').Customer;
-const ProcessorItem = require('mongoose-subscriptions').Schema.ProcessorItem;
-const transactionProcessor = require('../src/transactionProcessor');
+const assert = require("assert");
+const sinon = require("sinon");
+const Customer = require("mongoose-subscriptions").Customer;
+const ProcessorItem = require("mongoose-subscriptions").Schema.ProcessorItem;
+const transactionProcessor = require("../src/transactionProcessor");
 
-describe('transactionProcessor', () => {
-    beforeEach(function () {
+describe("transactionProcessor", () => {
+    beforeEach(function() {
         this.customer = new Customer({
-            name: 'Pesho',
-            email: 'seer@example.com',
-            ipAddress: '10.0.0.2',
-            processor: { id: '64601260', state: 'saved' },
-            defaultPaymentMethodId: 'three',
+            name: "Pesho",
+            email: "seer@example.com",
+            ipAddress: "10.0.0.2",
+            processor: { id: "64601260", state: "saved" },
+            defaultPaymentMethodId: "three",
             addresses: [
                 {
-                    _id: 'one',
-                    processor: { id: 'fc', state: 'saved' },
-                    firstName: 'Pesho',
-                    lastName: 'Stanchev',
+                    _id: "one",
+                    processor: { id: "fc", state: "saved" },
+                    firstName: "Pesho",
+                    lastName: "Stanchev",
                 },
             ],
             paymentMethods: [
                 {
-                    _id: 'three',
-                    __t: 'CreditCard',
-                    billingAddressId: 'one',
-                    processor: { id: 'gpjt3m', state: 'saved' },
+                    _id: "three",
+                    __t: "CreditCard",
+                    billingAddressId: "one",
+                    processor: { id: "gpjt3m", state: "saved" },
                 },
             ],
             subscriptions: [
                 {
-                    _id: 'four',
-                    plan: 'test',
-                    status: 'Active',
+                    _id: "four",
+                    plan: "test",
+                    status: "Active",
                     descriptor: {
-                        name: 'Tst*Mytest',
+                        name: "Tst*Mytest",
                         phone: 8899039032,
-                        url: 'example.com',
+                        url: "example.com",
                     },
-                    paymentMethodId: 'three',
-                    processor: { id: 'gzsxjb', state: 'saved' },
+                    paymentMethodId: "three",
+                    processor: { id: "gzsxjb", state: "saved" },
                 },
             ],
         });
 
         this.transactionPayPal = {
-            id: '7jflk342',
-            status: 'settled',
-            type: 'sale',
-            currencyIsoCode: 'USD',
-            amount: '14.90',
-            merchantAccountId: 'exampleUSD',
+            id: "7jflk342",
+            status: "settled",
+            type: "sale",
+            currencyIsoCode: "USD",
+            amount: "14.90",
+            merchantAccountId: "exampleUSD",
             subMerchantAccountId: null,
             masterMerchantAccountId: null,
             orderId: null,
-            createdAt: '2016-08-31T10:39:00Z',
-            updatedAt: '2016-08-31T14:03:31Z',
+            createdAt: "2016-08-31T10:39:00Z",
+            updatedAt: "2016-08-31T14:03:31Z",
             customer: {
-                id: '408622798',
-                firstName: 'Pesho',
-                lastName: 'Peshev',
+                id: "408622798",
+                firstName: "Pesho",
+                lastName: "Peshev",
                 company: null,
-                email: 'marinov1002@example.com',
+                email: "marinov1002@example.com",
                 website: null,
-                phone: '+359887111111',
+                phone: "+359887111111",
                 fax: null,
             },
             billing: {
@@ -86,7 +86,7 @@ describe('transactionProcessor', () => {
             refundedTransactionId: null,
             partialSettlementTransactionIds: [],
             authorizedTransactionId: null,
-            settlementBatchId: '2016-08-31_exampleUSD_2',
+            settlementBatchId: "2016-08-31_exampleUSD_2",
             shipping: {
                 id: null,
                 firstName: null,
@@ -102,96 +102,97 @@ describe('transactionProcessor', () => {
                 countryCodeAlpha3: null,
                 countryCodeNumeric: null,
             },
-            customFields: '',
+            customFields: "",
             avsErrorResponseCode: null,
-            avsPostalCodeResponseCode: 'I',
-            avsStreetAddressResponseCode: 'I',
-            cvvResponseCode: 'I',
+            avsPostalCodeResponseCode: "I",
+            avsStreetAddressResponseCode: "I",
+            cvvResponseCode: "I",
             gatewayRejectionReason: null,
             processorAuthorizationCode: null,
-            processorResponseCode: '1000',
-            processorResponseText: 'Approved',
+            processorResponseCode: "1000",
+            processorResponseText: "Approved",
             additionalProcessorResponse: null,
             voiceReferralNumber: null,
             purchaseOrderNumber: null,
             taxAmount: null,
             taxExempt: false,
             creditCard: {
-                token: 'f3326t2',
+                token: "f3326t2",
                 bin: null,
                 last4: null,
                 cardType: null,
-                expirationMonth: '',
-                expirationYear: '',
+                expirationMonth: "",
+                expirationYear: "",
                 customerLocation: null,
                 cardholderName: null,
-                imageUrl: 'https://assets.braintreegateway.com/payment_method_logo/unknown.png?environment=production',
-                prepaid: 'Unknown',
-                healthcare: 'Unknown',
-                debit: 'Unknown',
-                durbinRegulated: 'Unknown',
-                commercial: 'Unknown',
-                payroll: 'Unknown',
-                issuingBank: 'Unknown',
-                countryOfIssuance: 'Unknown',
-                productId: 'Unknown',
+                imageUrl:
+                    "https://assets.braintreegateway.com/payment_method_logo/unknown.png?environment=production",
+                prepaid: "Unknown",
+                healthcare: "Unknown",
+                debit: "Unknown",
+                durbinRegulated: "Unknown",
+                commercial: "Unknown",
+                payroll: "Unknown",
+                issuingBank: "Unknown",
+                countryOfIssuance: "Unknown",
+                productId: "Unknown",
                 uniqueNumberIdentifier: null,
                 venmoSdk: false,
-                maskedNumber: 'null******null',
-                expirationDate: '/',
+                maskedNumber: "null******null",
+                expirationDate: "/",
             },
             statusHistory: [
                 {
-                    timestamp: '2016-08-31T10:39:04Z',
-                    status: 'authorized',
-                    amount: '14.90',
-                    user: 'kerin@example.com',
-                    transactionSource: 'recurring',
+                    timestamp: "2016-08-31T10:39:04Z",
+                    status: "authorized",
+                    amount: "14.90",
+                    user: "kerin@example.com",
+                    transactionSource: "recurring",
                 },
                 {
-                    timestamp: '2016-08-31T10:39:04Z',
-                    status: 'submitted_for_settlement',
-                    amount: '14.90',
-                    user: 'kerin@example.com',
-                    transactionSource: 'recurring',
+                    timestamp: "2016-08-31T10:39:04Z",
+                    status: "submitted_for_settlement",
+                    amount: "14.90",
+                    user: "kerin@example.com",
+                    transactionSource: "recurring",
                 },
                 {
-                    timestamp: '2016-08-31T10:39:08Z',
-                    status: 'settling',
-                    amount: '14.90',
-                    user: 'kerin@example.com',
-                    transactionSource: 'recurring',
+                    timestamp: "2016-08-31T10:39:08Z",
+                    status: "settling",
+                    amount: "14.90",
+                    user: "kerin@example.com",
+                    transactionSource: "recurring",
                 },
                 {
-                    timestamp: '2016-08-31T14:03:31Z',
-                    status: 'settled',
-                    amount: '14.90',
+                    timestamp: "2016-08-31T14:03:31Z",
+                    status: "settled",
+                    amount: "14.90",
                     user: null,
-                    transactionSource: '',
+                    transactionSource: "",
                 },
             ],
-            planId: 'monthly',
-            subscriptionId: 'gzsxjb',
+            planId: "monthly",
+            subscriptionId: "gzsxjb",
             subscription: {
-                billingPeriodEndDate: '2016-09-29',
-                billingPeriodStartDate: '2016-08-31',
+                billingPeriodEndDate: "2016-09-29",
+                billingPeriodStartDate: "2016-08-31",
             },
             addOns: [],
             discounts: [
                 {
-                    amount: '0.00',
+                    amount: "0.00",
                     currentBillingCycle: 1,
-                    id: 'promocode',
-                    name: 'Signup promocode',
+                    id: "promocode",
+                    name: "Signup promocode",
                     neverExpires: false,
                     numberOfBillingCycles: 1,
                     quantity: 1,
                 },
             ],
             descriptor: {
-                name: 'example*Pro Plan',
-                phone: '0888415433',
-                url: 'example.com',
+                name: "example*Pro Plan",
+                phone: "0888415433",
+                url: "example.com",
             },
             recurring: true,
             channel: null,
@@ -206,46 +207,48 @@ describe('transactionProcessor', () => {
                 success: null,
             },
             disputes: [],
-            paymentInstrumentType: 'paypal_account',
-            processorSettlementResponseCode: '4000',
-            processorSettlementResponseText: 'Confirmed',
+            paymentInstrumentType: "paypal_account",
+            processorSettlementResponseCode: "4000",
+            processorSettlementResponseText: "Confirmed",
             threeDSecureInfo: null,
             paypal: {
-                token: 'f3326t2',
-                payerEmail: 'f0rceman@example.com',
-                paymentId: 'PAY-DSFHJKDSHFLKJHSDFLKJS',
-                authorizationId: '8FD90FA@E@JFKLD',
-                imageUrl: 'https://assets.braintreegateway.com/payment_method_logo/paypal.png?environment=production',
-                debugId: '111166bed8b83',
+                token: "f3326t2",
+                payerEmail: "f0rceman@example.com",
+                paymentId: "PAY-DSFHJKDSHFLKJHSDFLKJS",
+                authorizationId: "8FD90FA@E@JFKLD",
+                imageUrl:
+                    "https://assets.braintreegateway.com/payment_method_logo/paypal.png?environment=production",
+                debugId: "111166bed8b83",
                 payeeEmail: null,
                 customField: null,
-                payerId: 'HX2WMHJKFDF902',
-                payerFirstName: 'Pesho',
-                payerLastName: 'Peshev',
-                sellerProtectionStatus: 'INELIGIBLE',
-                captureId: '89403294802930423',
+                payerId: "HX2WMHJKFDF902",
+                payerFirstName: "Pesho",
+                payerLastName: "Peshev",
+                sellerProtectionStatus: "INELIGIBLE",
+                captureId: "89403294802930423",
                 refundId: null,
-                transactionFeeAmount: '0.81',
-                transactionFeeCurrencyIsoCode: 'USD',
+                transactionFeeAmount: "0.81",
+                transactionFeeCurrencyIsoCode: "USD",
                 description: null,
             },
             paypalAccount: {
-                token: 'f3326t2',
-                payerEmail: 'f0rceman@example.com',
-                paymentId: 'PAY-DSFHJKDSHFLKJHSDFLKJS',
-                authorizationId: '8FD90FA@E@JFKLD',
-                imageUrl: 'https://assets.braintreegateway.com/payment_method_logo/paypal.png?environment=production',
-                debugId: '111166bed8b83',
+                token: "f3326t2",
+                payerEmail: "f0rceman@example.com",
+                paymentId: "PAY-DSFHJKDSHFLKJHSDFLKJS",
+                authorizationId: "8FD90FA@E@JFKLD",
+                imageUrl:
+                    "https://assets.braintreegateway.com/payment_method_logo/paypal.png?environment=production",
+                debugId: "111166bed8b83",
                 payeeEmail: null,
                 customField: null,
-                payerId: 'HX2WMHJKFDF902',
-                payerFirstName: 'Pesho',
-                payerLastName: 'Peshev',
-                sellerProtectionStatus: 'INELIGIBLE',
-                captureId: '89403294802930423',
+                payerId: "HX2WMHJKFDF902",
+                payerFirstName: "Pesho",
+                payerLastName: "Peshev",
+                sellerProtectionStatus: "INELIGIBLE",
+                captureId: "89403294802930423",
                 refundId: null,
-                transactionFeeAmount: '0.81',
-                transactionFeeCurrencyIsoCode: 'USD',
+                transactionFeeAmount: "0.81",
+                transactionFeeCurrencyIsoCode: "USD",
                 description: null,
             },
             coinbaseAccount: {},
@@ -254,14 +257,14 @@ describe('transactionProcessor', () => {
         };
 
         this.fieldsPayPal = {
-            _id: '7jflk342',
-            processor: { id: '7jflk342', state: 'saved' },
-            amount: '14.90',
-            subscriptionId: 'four',
-            planProcessorId: 'monthly',
+            _id: "7jflk342",
+            processor: { id: "7jflk342", state: "saved" },
+            amount: "14.90",
+            subscriptionId: "four",
+            planProcessorId: "monthly",
             billing: {
-                processor: { id: null, state: 'saved' },
-                name: '',
+                processor: { id: null, state: "saved" },
+                name: "",
                 company: null,
                 createdAt: undefined,
                 updatedAt: undefined,
@@ -272,105 +275,105 @@ describe('transactionProcessor', () => {
                 postalCode: null,
             },
             customer: {
-                name: 'Pesho Peshev',
+                name: "Pesho Peshev",
                 company: null,
-                email: 'marinov1002@example.com',
-                phone: '+359887111111',
+                email: "marinov1002@example.com",
+                phone: "+359887111111",
             },
             discounts: [
                 {
-                    amount: 0.00,
-                    name: 'Signup promocode',
+                    amount: 0.0,
+                    name: "Signup promocode",
                 },
             ],
-            currency: 'USD',
-            status: 'settled',
+            currency: "USD",
+            status: "settled",
             statusHistory: [
                 {
-                    timestamp: '2016-08-31T10:39:04Z',
-                    status: 'authorized',
-                    amount: '14.90',
-                    user: 'kerin@example.com',
-                    transactionSource: 'recurring',
+                    timestamp: "2016-08-31T10:39:04Z",
+                    status: "authorized",
+                    amount: "14.90",
+                    user: "kerin@example.com",
+                    transactionSource: "recurring",
                 },
                 {
-                    timestamp: '2016-08-31T10:39:04Z',
-                    status: 'submitted_for_settlement',
-                    amount: '14.90',
-                    user: 'kerin@example.com',
-                    transactionSource: 'recurring',
+                    timestamp: "2016-08-31T10:39:04Z",
+                    status: "submitted_for_settlement",
+                    amount: "14.90",
+                    user: "kerin@example.com",
+                    transactionSource: "recurring",
                 },
                 {
-                    timestamp: '2016-08-31T10:39:08Z',
-                    status: 'settling',
-                    amount: '14.90',
-                    user: 'kerin@example.com',
-                    transactionSource: 'recurring',
+                    timestamp: "2016-08-31T10:39:08Z",
+                    status: "settling",
+                    amount: "14.90",
+                    user: "kerin@example.com",
+                    transactionSource: "recurring",
                 },
                 {
-                    timestamp: '2016-08-31T14:03:31Z',
-                    status: 'settled',
-                    amount: '14.90',
+                    timestamp: "2016-08-31T14:03:31Z",
+                    status: "settled",
+                    amount: "14.90",
                     user: null,
-                    transactionSource: '',
+                    transactionSource: "",
                 },
             ],
             descriptor: {
-                name: 'example*Pro Plan',
-                phone: '0888415433',
-                url: 'example.com',
+                name: "example*Pro Plan",
+                phone: "0888415433",
+                url: "example.com",
             },
-            createdAt: '2016-08-31T10:39:00Z',
-            updatedAt: '2016-08-31T14:03:31Z',
-            __t: 'TransactionPayPalAccount',
-            name: 'Pesho Peshev',
-            payerId: 'HX2WMHJKFDF902',
-            email: 'f0rceman@example.com',
+            createdAt: "2016-08-31T10:39:00Z",
+            updatedAt: "2016-08-31T14:03:31Z",
+            __t: "TransactionPayPalAccount",
+            name: "Pesho Peshev",
+            payerId: "HX2WMHJKFDF902",
+            email: "f0rceman@example.com",
         };
 
         this.transactionCreditCardRefunded = {
-            id: '9sc4zwjf',
-            status: 'settled',
-            type: 'credit',
-            currencyIsoCode: 'USD',
-            amount: '14.90',
-            merchantAccountId: 'exampleUSD',
+            id: "9sc4zwjf",
+            status: "settled",
+            type: "credit",
+            currencyIsoCode: "USD",
+            amount: "14.90",
+            merchantAccountId: "exampleUSD",
             subMerchantAccountId: null,
             masterMerchantAccountId: null,
             orderId: null,
-            createdAt: '2016-08-03T13:09:58Z',
-            updatedAt: '2016-08-03T23:40:08Z',
+            createdAt: "2016-08-03T13:09:58Z",
+            updatedAt: "2016-08-03T23:40:08Z",
             customer: {
-                id: '264704707',
-                firstName: 'Pesho',
-                lastName: 'Peshev',
+                id: "264704707",
+                firstName: "Pesho",
+                lastName: "Peshev",
                 company: null,
-                email: 'keeletsang@example.com',
+                email: "keeletsang@example.com",
                 website: null,
-                phone: '11111111111',
+                phone: "11111111111",
                 fax: null,
             },
             billing: {
-                id: 'dz',
-                firstName: 'Pesho',
-                lastName: 'Peshev',
+                id: "dz",
+                firstName: "Pesho",
+                lastName: "Peshev",
                 company: null,
-                streetAddress: 'Flat 3',
-                extendedAddress: '71 - 72 Princes Gate',
-                locality: 'Black Lake',
+                streetAddress: "Flat 3",
+                extendedAddress: "71 - 72 Princes Gate",
+                locality: "Black Lake",
                 region: null,
-                postalCode: 'BLK120',
-                countryName: 'United Kingdom',
-                countryCodeAlpha2: 'GB',
-                countryCodeAlpha3: 'GBR',
-                countryCodeNumeric: '826',
+                postalCode: "BLK120",
+                countryName: "United Kingdom",
+                countryCodeAlpha2: "GB",
+                countryCodeAlpha3: "GBR",
+                countryCodeNumeric: "826",
             },
             refundId: null,
             refundIds: [],
-            refundedTransactionId: 'ey46ey2b',
+            refundedTransactionId: "ey46ey2b",
             partialSettlementTransactionIds: [],
             authorizedTransactionId: null,
-            settlementBatchId: '2016-08-04_exampleUSD',
+            settlementBatchId: "2016-08-04_exampleUSD",
             shipping: {
                 id: null,
                 firstName: null,
@@ -386,62 +389,63 @@ describe('transactionProcessor', () => {
                 countryCodeAlpha3: null,
                 countryCodeNumeric: null,
             },
-            customFields: '',
+            customFields: "",
             avsErrorResponseCode: null,
-            avsPostalCodeResponseCode: 'A',
-            avsStreetAddressResponseCode: 'A',
-            cvvResponseCode: 'A',
+            avsPostalCodeResponseCode: "A",
+            avsStreetAddressResponseCode: "A",
+            cvvResponseCode: "A",
             gatewayRejectionReason: null,
             processorAuthorizationCode: null,
-            processorResponseCode: '1002',
-            processorResponseText: 'Processed',
+            processorResponseCode: "1002",
+            processorResponseText: "Processed",
             additionalProcessorResponse: null,
             voiceReferralNumber: null,
             purchaseOrderNumber: null,
             taxAmount: null,
             taxExempt: false,
             creditCard: {
-                token: '7mzhnp2',
-                bin: '411111',
-                last4: '1111',
-                cardType: 'Visa',
-                expirationMonth: '07',
-                expirationYear: '2018',
-                customerLocation: 'International',
+                token: "7mzhnp2",
+                bin: "411111",
+                last4: "1111",
+                cardType: "Visa",
+                expirationMonth: "07",
+                expirationYear: "2018",
+                customerLocation: "International",
                 cardholderName: null,
-                imageUrl: 'https://assets.braintreegateway.com/payment_method_logo/visa.png?environment=production',
-                prepaid: 'No',
-                healthcare: 'No',
-                debit: 'Yes',
-                durbinRegulated: 'No',
-                commercial: 'Unknown',
-                payroll: 'No',
-                issuingBank: 'HSBC Bank PLC',
-                countryOfIssuance: 'GBR',
-                productId: 'F',
-                uniqueNumberIdentifier: '75a85af754be161e21ffb8d584c70de8',
+                imageUrl:
+                    "https://assets.braintreegateway.com/payment_method_logo/visa.png?environment=production",
+                prepaid: "No",
+                healthcare: "No",
+                debit: "Yes",
+                durbinRegulated: "No",
+                commercial: "Unknown",
+                payroll: "No",
+                issuingBank: "HSBC Bank PLC",
+                countryOfIssuance: "GBR",
+                productId: "F",
+                uniqueNumberIdentifier: "75a85af754be161e21ffb8d584c70de8",
                 venmoSdk: false,
-                maskedNumber: '411111******1111',
-                expirationDate: '07/2018',
+                maskedNumber: "411111******1111",
+                expirationDate: "07/2018",
             },
             statusHistory: [
                 {
-                    timestamp: '2016-08-03T13:09:59Z',
-                    status: 'submitted_for_settlement',
-                    amount: '14.90',
-                    user: 'dachev@example.com',
-                    transactionSource: 'control_panel',
+                    timestamp: "2016-08-03T13:09:59Z",
+                    status: "submitted_for_settlement",
+                    amount: "14.90",
+                    user: "dachev@example.com",
+                    transactionSource: "control_panel",
                 },
                 {
-                    timestamp: '2016-08-03T23:42:01Z',
-                    status: 'settled',
-                    amount: '14.90',
+                    timestamp: "2016-08-03T23:42:01Z",
+                    status: "settled",
+                    amount: "14.90",
                     user: null,
-                    transactionSource: '',
+                    transactionSource: "",
                 },
             ],
             planId: null,
-            subscriptionId: 'gzsxjb',
+            subscriptionId: "gzsxjb",
             subscription: {
                 billingPeriodEndDate: null,
                 billingPeriodStartDate: null,
@@ -466,9 +470,9 @@ describe('transactionProcessor', () => {
                 success: null,
             },
             disputes: [],
-            paymentInstrumentType: 'credit_card',
-            processorSettlementResponseCode: '',
-            processorSettlementResponseText: '',
+            paymentInstrumentType: "credit_card",
+            processorSettlementResponseCode: "",
+            processorSettlementResponseText: "",
             threeDSecureInfo: null,
             paypalAccount: {},
             coinbaseAccount: {},
@@ -477,51 +481,52 @@ describe('transactionProcessor', () => {
         };
 
         this.fieldsCreditCardRefunded = {
-            _id: '9sc4zwjf',
+            _id: "9sc4zwjf",
             processor: {
-                id: '9sc4zwjf',
-                state: 'saved',
+                id: "9sc4zwjf",
+                state: "saved",
             },
-            amount: '14.90',
-            refundedTransactionId: 'ey46ey2b',
-            subscriptionId: 'four',
+            amount: "14.90",
+            refundedTransactionId: "ey46ey2b",
+            subscriptionId: "four",
             billing: {
                 processor: {
-                    id: 'dz',
-                    state: 'saved',
+                    id: "dz",
+                    state: "saved",
                 },
-                name: 'Pesho Peshev',
+                name: "Pesho Peshev",
                 company: null,
                 createdAt: undefined,
                 updatedAt: undefined,
-                country: 'GB',
-                locality: 'Black Lake',
-                streetAddress: 'Flat 3',
-                extendedAddress: '71 - 72 Princes Gate',
-                postalCode: 'BLK120',
+                country: "GB",
+                locality: "Black Lake",
+                streetAddress: "Flat 3",
+                extendedAddress: "71 - 72 Princes Gate",
+                postalCode: "BLK120",
             },
             customer: {
-                name: 'Pesho Peshev',
+                name: "Pesho Peshev",
                 company: null,
-                email: 'keeletsang@example.com',
-                phone: '11111111111',
+                email: "keeletsang@example.com",
+                phone: "11111111111",
             },
-            currency: 'USD',
-            status: 'settled',
-            statusHistory: [{
-                timestamp: '2016-08-03T13:09:59Z',
-                status: 'submitted_for_settlement',
-                amount: '14.90',
-                user: 'dachev@example.com',
-                transactionSource: 'control_panel',
-            },
-            {
-                timestamp: '2016-08-03T23:42:01Z',
-                status: 'settled',
-                amount: '14.90',
-                user: null,
-                transactionSource: '',
-            },
+            currency: "USD",
+            status: "settled",
+            statusHistory: [
+                {
+                    timestamp: "2016-08-03T13:09:59Z",
+                    status: "submitted_for_settlement",
+                    amount: "14.90",
+                    user: "dachev@example.com",
+                    transactionSource: "control_panel",
+                },
+                {
+                    timestamp: "2016-08-03T23:42:01Z",
+                    status: "settled",
+                    amount: "14.90",
+                    user: null,
+                    transactionSource: "",
+                },
             ],
             discounts: [],
             descriptor: {
@@ -529,29 +534,32 @@ describe('transactionProcessor', () => {
                 phone: null,
                 url: null,
             },
-            createdAt: '2016-08-03T13:09:58Z',
-            updatedAt: '2016-08-03T23:40:08Z',
-            __t: 'TransactionCreditCard',
-            maskedNumber: '411111******1111',
-            countryOfIssuance: 'GBR',
-            issuingBank: 'HSBC Bank PLC',
-            cardType: 'Visa',
-            expirationMonth: '07',
-            expirationYear: '2018',
+            createdAt: "2016-08-03T13:09:58Z",
+            updatedAt: "2016-08-03T23:40:08Z",
+            __t: "TransactionCreditCard",
+            maskedNumber: "411111******1111",
+            countryOfIssuance: "GBR",
+            issuingBank: "HSBC Bank PLC",
+            cardType: "Visa",
+            expirationMonth: "07",
+            expirationYear: "2018",
         };
     });
 
-    it('fields should map result data into a model', function () {
+    it("fields should map result data into a model", function() {
         const fields = transactionProcessor.fields(this.customer, this.transactionPayPal);
         assert.deepEqual(fields, this.fieldsPayPal);
     });
 
-    it('fields should map credit card transaction data into a model', function () {
-        const fields = transactionProcessor.fields(this.customer, this.transactionCreditCardRefunded);
+    it("fields should map credit card transaction data into a model", function() {
+        const fields = transactionProcessor.fields(
+            this.customer,
+            this.transactionCreditCardRefunded
+        );
         assert.deepEqual(fields, this.fieldsCreditCardRefunded);
     });
 
-    it('save should call refund endpoint on full refund transaction', function () {
+    it("save should call refund endpoint on full refund transaction", function() {
         const result = {
             success: true,
             transaction: this.transactionCreditCardRefunded,
@@ -568,20 +576,31 @@ describe('transactionProcessor', () => {
 
         this.customer.transactions.push(this.fieldsPayPal);
 
-        return transactionProcessor.refund(processor, this.customer, this.customer.transactions[0], null)
-            .then((customer) => {
+        return transactionProcessor
+            .refund(processor, this.customer, this.customer.transactions[0], null)
+            .then(customer => {
                 const refunded = this.customer.transactions[0];
                 const expected = this.customer.transactions.create(this.fieldsCreditCardRefunded);
 
-                sinon.assert.calledWith(processor.emit, 'event', sinon.match.has('name', 'transaction').and(sinon.match.has('action', 'refund')));
-                sinon.assert.calledWith(processor.emit, 'event', sinon.match.has('name', 'transaction').and(sinon.match.has('action', 'refunded')));
+                sinon.assert.calledWith(
+                    processor.emit,
+                    "event",
+                    sinon.match.has("name", "transaction").and(sinon.match.has("action", "refund"))
+                );
+                sinon.assert.calledWith(
+                    processor.emit,
+                    "event",
+                    sinon.match
+                        .has("name", "transaction")
+                        .and(sinon.match.has("action", "refunded"))
+                );
                 sinon.assert.calledOnce(gateway.transaction.refund);
 
                 assert.deepEqual(refunded.toObject(), expected.toObject());
             });
     });
 
-    it('save should call refund endpoint on refund transaction with amount', function () {
+    it("save should call refund endpoint on refund transaction with amount", function() {
         const result = {
             success: true,
             transaction: this.transactionCreditCardRefunded,
@@ -598,22 +617,33 @@ describe('transactionProcessor', () => {
 
         this.customer.transactions.push(this.fieldsPayPal);
 
-        return transactionProcessor.refund(processor, this.customer, this.customer.transactions[0], 10)
-            .then((customer) => {
+        return transactionProcessor
+            .refund(processor, this.customer, this.customer.transactions[0], 10)
+            .then(customer => {
                 const refunded = this.customer.transactions[0];
                 const expected = this.customer.transactions.create(this.fieldsCreditCardRefunded);
 
-                sinon.assert.calledWith(processor.emit, 'event', sinon.match.has('name', 'transaction').and(sinon.match.has('action', 'refund')));
-                sinon.assert.calledWith(processor.emit, 'event', sinon.match.has('name', 'transaction').and(sinon.match.has('action', 'refunded')));
+                sinon.assert.calledWith(
+                    processor.emit,
+                    "event",
+                    sinon.match.has("name", "transaction").and(sinon.match.has("action", "refund"))
+                );
+                sinon.assert.calledWith(
+                    processor.emit,
+                    "event",
+                    sinon.match
+                        .has("name", "transaction")
+                        .and(sinon.match.has("action", "refunded"))
+                );
                 sinon.assert.calledOnce(gateway.transaction.refund);
 
                 assert.deepEqual(refunded.toObject(), expected.toObject());
             });
     });
 
-    it('save should reject on api failure for refund', function () {
+    it("save should reject on api failure for refund", function() {
         const result = {
-            message: 'some error',
+            message: "some error",
         };
         const gateway = {
             transaction: {
@@ -627,21 +657,32 @@ describe('transactionProcessor', () => {
 
         this.customer.transactions.push(this.fieldsPayPal);
 
-        return transactionProcessor.refund(processor, this.customer, this.customer.transactions[0], null)
+        return transactionProcessor
+            .refund(processor, this.customer, this.customer.transactions[0], null)
             .then(() => {
-                assert.ok(false, 'Should reject on api failure');
+                assert.ok(false, "Should reject on api failure");
             })
-            .catch((error) => {
-                sinon.assert.calledWith(processor.emit, 'event', sinon.match.has('name', 'transaction').and(sinon.match.has('action', 'refund')));
-                sinon.assert.neverCalledWith(processor.emit, 'event', sinon.match.has('name', 'transaction').and(sinon.match.has('action', 'refunded')));
+            .catch(error => {
+                sinon.assert.calledWith(
+                    processor.emit,
+                    "event",
+                    sinon.match.has("name", "transaction").and(sinon.match.has("action", "refund"))
+                );
+                sinon.assert.neverCalledWith(
+                    processor.emit,
+                    "event",
+                    sinon.match
+                        .has("name", "transaction")
+                        .and(sinon.match.has("action", "refunded"))
+                );
                 sinon.assert.calledOnce(gateway.transaction.refund);
 
-                assert.equal(error.message, 'some error');
+                assert.equal(error.message, "some error");
             });
     });
 
-    it('save should reject on api failure for refund', function () {
-        const apiError = new Error('error');
+    it("save should reject on api failure for refund", function() {
+        const apiError = new Error("error");
         const gateway = {
             transaction: {
                 refund: sinon.stub().rejects(apiError),
@@ -654,13 +695,24 @@ describe('transactionProcessor', () => {
 
         this.customer.transactions.push(this.fieldsPayPal);
 
-        return transactionProcessor.refund(processor, this.customer, this.customer.transactions[0], null)
+        return transactionProcessor
+            .refund(processor, this.customer, this.customer.transactions[0], null)
             .then(() => {
-                assert.ok(false, 'Should reject on api failure');
+                assert.ok(false, "Should reject on api failure");
             })
-            .catch((error) => {
-                sinon.assert.calledWith(processor.emit, 'event', sinon.match.has('name', 'transaction').and(sinon.match.has('action', 'refund')));
-                sinon.assert.neverCalledWith(processor.emit, 'event', sinon.match.has('name', 'transaction').and(sinon.match.has('action', 'refunded')));
+            .catch(error => {
+                sinon.assert.calledWith(
+                    processor.emit,
+                    "event",
+                    sinon.match.has("name", "transaction").and(sinon.match.has("action", "refund"))
+                );
+                sinon.assert.neverCalledWith(
+                    processor.emit,
+                    "event",
+                    sinon.match
+                        .has("name", "transaction")
+                        .and(sinon.match.has("action", "refunded"))
+                );
                 sinon.assert.calledOnce(gateway.transaction.refund);
 
                 assert.equal(error, apiError);

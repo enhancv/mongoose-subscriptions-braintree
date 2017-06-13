@@ -1,22 +1,22 @@
-const assert = require('assert');
-const sinon = require('sinon');
-const Customer = require('mongoose-subscriptions').Customer;
-const ProcessorItem = require('mongoose-subscriptions').Schema.ProcessorItem;
-const addressProcessor = require('../src/addressProcessor');
+const assert = require("assert");
+const sinon = require("sinon");
+const Customer = require("mongoose-subscriptions").Customer;
+const ProcessorItem = require("mongoose-subscriptions").Schema.ProcessorItem;
+const addressProcessor = require("../src/addressProcessor");
 
-describe('addressProcessor', () => {
-    beforeEach(function () {
+describe("addressProcessor", () => {
+    beforeEach(function() {
         this.customer = new Customer({
-            name: 'Pesho',
-            email: 'seer@example.com',
-            ipAddress: '10.0.0.2',
-            processor: { id: '64601260', state: 'saved' },
-            defaultPaymentMethodId: 'three',
+            name: "Pesho",
+            email: "seer@example.com",
+            ipAddress: "10.0.0.2",
+            processor: { id: "64601260", state: "saved" },
+            defaultPaymentMethodId: "three",
             addresses: [
                 {
-                    _id: 'one',
-                    processor: { id: 'test-id', state: 'saved' },
-                    name: 'Pesho Stanchev',
+                    _id: "one",
+                    processor: { id: "test-id", state: "saved" },
+                    name: "Pesho Stanchev",
                 },
             ],
         });
@@ -24,76 +24,75 @@ describe('addressProcessor', () => {
         this.addressResult = {
             success: true,
             address: {
-                id: 'test-id',
-                company: 'Example company',
-                firstName: 'Pesho',
-                lastName: 'Peshev Stoevski',
-                countryCodeAlpha2: 'BG',
-                locality: 'Sofia',
-                streetAddress: 'Tsarigradsko Shose 4',
-                extendedAddress: 'floor 3',
-                postalCode: '1000',
-                createdAt: '2016-09-29T16:12:26Z',
-                updatedAt: '2016-09-30T12:25:18Z',
+                id: "test-id",
+                company: "Example company",
+                firstName: "Pesho",
+                lastName: "Peshev Stoevski",
+                countryCodeAlpha2: "BG",
+                locality: "Sofia",
+                streetAddress: "Tsarigradsko Shose 4",
+                extendedAddress: "floor 3",
+                postalCode: "1000",
+                createdAt: "2016-09-29T16:12:26Z",
+                updatedAt: "2016-09-30T12:25:18Z",
             },
         };
     });
 
-
-    it('processorFields should map models to braintree data', () => {
+    it("processorFields should map models to braintree data", () => {
         const address = {
             processor: {
-                id: 'test',
+                id: "test",
                 state: ProcessorItem.SAVED,
             },
-            company: 'Example company',
-            name: 'Pesho Peshev Stoevski',
-            country: 'BG',
-            locality: 'Sofia',
-            streetAddress: 'Tsarigradsko Shose 4',
-            extendedAddress: 'floor 3',
-            postalCode: '1000',
+            company: "Example company",
+            name: "Pesho Peshev Stoevski",
+            country: "BG",
+            locality: "Sofia",
+            streetAddress: "Tsarigradsko Shose 4",
+            extendedAddress: "floor 3",
+            postalCode: "1000",
         };
 
         const fields = addressProcessor.processorFields(address);
 
         const expected = {
-            company: 'Example company',
-            firstName: 'Pesho',
-            lastName: 'Peshev Stoevski',
-            countryCodeAlpha2: 'BG',
-            locality: 'Sofia',
-            streetAddress: 'Tsarigradsko Shose 4',
-            extendedAddress: 'floor 3',
-            postalCode: '1000',
+            company: "Example company",
+            firstName: "Pesho",
+            lastName: "Peshev Stoevski",
+            countryCodeAlpha2: "BG",
+            locality: "Sofia",
+            streetAddress: "Tsarigradsko Shose 4",
+            extendedAddress: "floor 3",
+            postalCode: "1000",
         };
 
         assert.deepEqual(fields, expected);
     });
 
-    it('fields should map result data into a model', function () {
+    it("fields should map result data into a model", function() {
         const fields = addressProcessor.fields(this.addressResult.address);
 
         const expected = {
             processor: {
-                id: 'test-id',
+                id: "test-id",
                 state: ProcessorItem.SAVED,
             },
-            company: 'Example company',
-            name: 'Pesho Peshev Stoevski',
-            country: 'BG',
-            locality: 'Sofia',
-            streetAddress: 'Tsarigradsko Shose 4',
-            extendedAddress: 'floor 3',
-            postalCode: '1000',
-            createdAt: '2016-09-29T16:12:26Z',
-            updatedAt: '2016-09-30T12:25:18Z',
+            company: "Example company",
+            name: "Pesho Peshev Stoevski",
+            country: "BG",
+            locality: "Sofia",
+            streetAddress: "Tsarigradsko Shose 4",
+            extendedAddress: "floor 3",
+            postalCode: "1000",
+            createdAt: "2016-09-29T16:12:26Z",
+            updatedAt: "2016-09-30T12:25:18Z",
         };
 
         assert.deepEqual(fields, expected);
     });
 
-    it('save should call create endpoint on new address', function () {
+    it("save should call create endpoint on new address", function() {
         const gateway = {
             address: {
                 create: sinon.stub().resolves(this.addressResult),
@@ -106,17 +105,28 @@ describe('addressProcessor', () => {
 
         this.customer.addresses[0].processor = { id: null, state: ProcessorItem.INITIAL };
 
-        return addressProcessor.save(processor, this.customer, this.customer.addresses[0])
-            .then((customer) => {
+        return addressProcessor
+            .save(processor, this.customer, this.customer.addresses[0])
+            .then(customer => {
                 const address = customer.addresses[0];
-                sinon.assert.calledWith(processor.emit, 'event', sinon.match.has('name', 'address').and(sinon.match.has('action', 'saved')));
+                sinon.assert.calledWith(
+                    processor.emit,
+                    "event",
+                    sinon.match.has("name", "address").and(sinon.match.has("action", "saved"))
+                );
                 sinon.assert.calledOnce(gateway.address.create);
-                sinon.assert.calledWith(gateway.address.create, sinon.match.has('customerId', '64601260'));
-                assert.deepEqual(address.processor.toObject(), { id: 'test-id', state: ProcessorItem.SAVED });
+                sinon.assert.calledWith(
+                    gateway.address.create,
+                    sinon.match.has("customerId", "64601260")
+                );
+                assert.deepEqual(address.processor.toObject(), {
+                    id: "test-id",
+                    state: ProcessorItem.SAVED,
+                });
             });
     });
 
-    it('save should call update endpoint on existing address', function () {
+    it("save should call update endpoint on existing address", function() {
         const gateway = {
             address: {
                 update: sinon.stub().resolves(this.addressResult),
@@ -129,32 +139,47 @@ describe('addressProcessor', () => {
 
         this.customer.addresses[0].processor.state = ProcessorItem.CHANGED;
 
-        return addressProcessor.save(processor, this.customer, this.customer.addresses[0])
-            .then((customer) => {
+        return addressProcessor
+            .save(processor, this.customer, this.customer.addresses[0])
+            .then(customer => {
                 const address = customer.addresses[0];
-                sinon.assert.calledWith(processor.emit, 'event', sinon.match.has('name', 'address').and(sinon.match.has('action', 'saved')));
+                sinon.assert.calledWith(
+                    processor.emit,
+                    "event",
+                    sinon.match.has("name", "address").and(sinon.match.has("action", "saved"))
+                );
                 sinon.assert.calledOnce(gateway.address.update);
-                sinon.assert.calledWith(gateway.address.update, '64601260', 'test-id', sinon.match.object);
-                assert.deepEqual('Example company', address.company);
+                sinon.assert.calledWith(
+                    gateway.address.update,
+                    "64601260",
+                    "test-id",
+                    sinon.match.object
+                );
+                assert.deepEqual("Example company", address.company);
             });
     });
 
-    it('save should be a noop if the state has not changed', function () {
-        const gateway = { };
+    it("save should be a noop if the state has not changed", function() {
+        const gateway = {};
         const processor = {
             gateway,
             emit: sinon.spy(),
         };
 
-        return addressProcessor.save(processor, this.customer, this.customer.addresses[0])
-            .then((customer) => {
+        return addressProcessor
+            .save(processor, this.customer, this.customer.addresses[0])
+            .then(customer => {
                 assert.equal(customer, this.customer);
-                sinon.assert.neverCalledWith(processor.emit, 'event', sinon.match.has('name', 'address'));
+                sinon.assert.neverCalledWith(
+                    processor.emit,
+                    "event",
+                    sinon.match.has("name", "address")
+                );
             });
     });
 
-    it('save should send a rejection on api error', function () {
-        const apiError = new Error('error');
+    it("save should send a rejection on api error", function() {
+        const apiError = new Error("error");
 
         const gateway = {
             address: {
@@ -168,17 +193,22 @@ describe('addressProcessor', () => {
 
         this.customer.addresses[0].processor.state = ProcessorItem.CHANGED;
 
-        return addressProcessor.save(processor, this.customer, this.customer.addresses[0])
-            .catch((error) => {
-                sinon.assert.neverCalledWith(processor.emit, 'event', sinon.match.has('action', 'saved'));
+        return addressProcessor
+            .save(processor, this.customer, this.customer.addresses[0])
+            .catch(error => {
+                sinon.assert.neverCalledWith(
+                    processor.emit,
+                    "event",
+                    sinon.match.has("action", "saved")
+                );
                 assert.equal(error, apiError);
             });
     });
 
-    it('save should send a rejection on api result failure', function () {
+    it("save should send a rejection on api result failure", function() {
         const gateway = {
             address: {
-                update: sinon.stub().resolves({ success: false, message: 'some error' }),
+                update: sinon.stub().resolves({ success: false, message: "some error" }),
             },
         };
         const processor = {
@@ -188,10 +218,15 @@ describe('addressProcessor', () => {
 
         this.customer.addresses[0].processor.state = ProcessorItem.CHANGED;
 
-        return addressProcessor.save(processor, this.customer, this.customer.addresses[0])
-            .catch((error) => {
-                sinon.assert.neverCalledWith(processor.emit, 'event', sinon.match.has('action', 'saved'));
-                assert.equal(error.message, 'some error');
+        return addressProcessor
+            .save(processor, this.customer, this.customer.addresses[0])
+            .catch(error => {
+                sinon.assert.neverCalledWith(
+                    processor.emit,
+                    "event",
+                    sinon.match.has("action", "saved")
+                );
+                assert.equal(error.message, "some error");
             });
     });
 });

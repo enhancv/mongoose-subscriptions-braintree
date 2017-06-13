@@ -1,22 +1,22 @@
-const CUSTOMER = 'customer';
-const PAYMENT_METHOD = 'paymentMethod';
-const ADDRESS = 'address';
-const SUBSCRIPTION = 'subscription';
-const TRANSACTION = 'transaction';
-const PLAN = 'plan';
+const CUSTOMER = "customer";
+const PAYMENT_METHOD = "paymentMethod";
+const ADDRESS = "address";
+const SUBSCRIPTION = "subscription";
+const TRANSACTION = "transaction";
+const PLAN = "plan";
 
-const LOADING = 'loading';
-const LOADED = 'loaded';
+const LOADING = "loading";
+const LOADED = "loaded";
 
-const CREATING = 'creating';
-const UPDATING = 'updating';
-const SAVED = 'saved';
+const CREATING = "creating";
+const UPDATING = "updating";
+const SAVED = "saved";
 
-const CANCELING = 'canceling';
-const CANCELED = 'canceled';
+const CANCELING = "canceling";
+const CANCELED = "canceled";
 
-const REFUND = 'refund';
-const REFUNDED = 'refunded';
+const REFUND = "refund";
+const REFUNDED = "refunded";
 
 class Event {
     constructor(name, action, context) {
