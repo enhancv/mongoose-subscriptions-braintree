@@ -1,6 +1,10 @@
 Mongoose Subscriptions Braintree
 ================================
 
+[![Build Status](https://travis-ci.org/enhancv/mongoose-subscriptions-braintree.svg?branch=master)](https://travis-ci.org/enhancv/mongoose-subscriptions-braintree)
+[![Code Climate](https://codeclimate.com/github/enhancv/mongoose-subscriptions-braintree/badges/gpa.svg)](https://codeclimate.com/github/enhancv/mongoose-subscriptions-braintree)
+[![Test Coverage](https://codeclimate.com/github/enhancv/mongoose-subscriptions-braintree/badges/coverage.svg)](https://codeclimate.com/github/enhancv/mongoose-subscriptions-braintree/coverage)
+
 Braintree processor for https://github.com/enhancv/mongoose-subscriptions
 
 Useage
