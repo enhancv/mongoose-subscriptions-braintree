@@ -1,6 +1,6 @@
 {
   "name": "mongoose-subscriptions-braintree",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "description": "Braintree processor for mongoose-subscriptions",
   "main": "src/index.js",
   "repository": "git@github.com:enhancv/mongoose-subscriptions-braintree.git",
@@ -16,7 +16,7 @@
   },
   "peerDependencies": {
     "braintree": "^2.0",
-    "mongoose-subscriptions": "^1.5"
+    "mongoose-subscriptions": "^1.7"
   },
   "devDependencies": {
     "braintree": "^2.1.1",
@@ -24,7 +24,7 @@
     "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
     "mongoose": "^4.8",
-    "mongoose-subscriptions": "^1.5.1",
+    "mongoose-subscriptions": "^1.7.2",
     "prettier": "^1.4.4",
     "sinon": "^2.1.0"
   }

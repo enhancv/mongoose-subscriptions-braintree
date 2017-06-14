@@ -480,11 +480,8 @@ describe(
 
             this.customer.subscriptions[0].processor = { id: null, state: ProcessorItem.INITIAL };
 
-            return this.customer
-                .save()
-                .then(customer =>
-                    subscriptionProcessor.save(processor, customer, customer.subscriptions[0])
-                )
+            return subscriptionProcessor
+                .save(processor, this.customer, this.customer.subscriptions[0])
                 .then(customer => {
                     const subscription = this.customer.subscriptions[0];
 
@@ -517,11 +514,8 @@ describe(
             this.customer.subscriptions[0].processor.state = ProcessorItem.CHANGED;
             this.customer.subscriptions[0].status = "Canceled";
 
-            return this.customer
-                .save()
-                .then(customer =>
-                    subscriptionProcessor.save(processor, customer, customer.subscriptions[0])
-                )
+            return subscriptionProcessor
+                .save(processor, this.customer, this.customer.subscriptions[0])
                 .then(customer => {
                     const subscription = this.customer.subscriptions[0];
 
@@ -549,11 +543,8 @@ describe(
                 emit: sinon.spy(),
             };
 
-            return this.customer
-                .save()
-                .then(customer =>
-                    subscriptionProcessor.cancel(processor, customer, customer.subscriptions[0])
-                )
+            return subscriptionProcessor
+                .cancel(processor, this.customer, this.customer.subscriptions[0])
                 .then(customer => {
                     const subscription = this.customer.subscriptions[0];
 
@@ -589,11 +580,8 @@ describe(
                 emit: sinon.spy(),
             };
 
-            return this.customer
-                .save()
-                .then(customer =>
-                    subscriptionProcessor.cancel(processor, customer, customer.subscriptions[0])
-                )
+            return subscriptionProcessor
+                .save(processor, this.customer, this.customer.subscriptions[0])
                 .catch(error => {
                     sinon.assert.calledWith(
                         processor.emit,
@@ -618,11 +606,8 @@ describe(
                 emit: sinon.spy(),
             };
 
-            return this.customer
-                .save()
-                .then(customer =>
-                    subscriptionProcessor.save(processor, customer, customer.subscriptions[0])
-                )
+            return subscriptionProcessor
+                .save(processor, this.customer, this.customer.subscriptions[0])
                 .then(customer => {
                     assert.equal(customer, this.customer);
                     sinon.assert.neverCalledWith(
@@ -642,11 +627,8 @@ describe(
 
             this.customer.subscriptions[0].processor.state = ProcessorItem.LOCAL;
 
-            return this.customer
-                .save()
-                .then(customer =>
-                    subscriptionProcessor.save(processor, customer, customer.subscriptions[0])
-                )
+            return subscriptionProcessor
+                .save(processor, this.customer, this.customer.subscriptions[0])
                 .then(customer => {
                     assert.equal(customer, this.customer);
                     sinon.assert.neverCalledWith(
@@ -670,11 +652,8 @@ describe(
 
             this.customer.subscriptions[0].processor.state = ProcessorItem.CHANGED;
 
-            return this.customer
-                .save()
-                .then(customer =>
-                    subscriptionProcessor.save(processor, customer, customer.subscriptions[0])
-                )
+            return subscriptionProcessor
+                .save(processor, this.customer, this.customer.subscriptions[0])
                 .then(customer => {
                     const subscription = this.customer.subscriptions[0];
 
@@ -705,11 +684,8 @@ describe(
 
             this.customer.subscriptions[0].processor.state = ProcessorItem.CHANGED;
 
-            return this.customer
-                .save()
-                .then(customer =>
-                    subscriptionProcessor.save(processor, customer, customer.subscriptions[0])
-                )
+            return subscriptionProcessor
+                .save(processor, this.customer, this.customer.subscriptions[0])
                 .catch(error => {
                     sinon.assert.neverCalledWith(
                         processor.emit,
@@ -733,11 +709,8 @@ describe(
 
             this.customer.subscriptions[0].processor.state = ProcessorItem.CHANGED;
 
-            return this.customer
-                .save()
-                .then(customer =>
-                    subscriptionProcessor.save(processor, customer, customer.subscriptions[0])
-                )
+            return subscriptionProcessor
+                .save(processor, this.customer, this.customer.subscriptions[0])
                 .catch(error => {
                     sinon.assert.neverCalledWith(
                         processor.emit,

@@ -112,6 +112,7 @@ function fields(customer, originalDiscounts, subscription) {
 function cancel(processor, customer, subscription) {
     ProcessorItem.validateIsSaved(customer, "Customer");
     ProcessorItem.validateIsSaved(subscription, "Subscription");
+    subscription.initOriginals();
 
     processor.emit("event", new Event(Event.SUBSCRIPTION, Event.CANCELING, subscription));
 
@@ -124,6 +125,8 @@ function cancel(processor, customer, subscription) {
 }
 
 function save(processor, customer, subscription) {
+    subscription.initOriginals();
+
     const data = processorFields(customer, subscription);
 
     function processSave(result) {

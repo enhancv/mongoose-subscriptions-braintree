@@ -424,15 +424,15 @@ mongodb@2.2.25:
     mongodb-core "2.1.9"
     readable-stream "2.1.5"
 
-mongoose-originals@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/mongoose-originals/-/mongoose-originals-1.0.1.tgz#bd8c94cd87da474c64b303dee62e56c3f158df38"
+mongoose-originals@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/mongoose-originals/-/mongoose-originals-1.1.0.tgz#f4c57537a3148b64b22e0e6b82129bd51f851fd4"
 
-mongoose-subscriptions@^1.5.1:
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/mongoose-subscriptions/-/mongoose-subscriptions-1.5.1.tgz#0dc6e18e55b02fb7838638326a8c9258d10cfab5"
+mongoose-subscriptions@^1.7.2:
+  version "1.7.3"
+  resolved "https://registry.yarnpkg.com/mongoose-subscriptions/-/mongoose-subscriptions-1.7.3.tgz#055c8f576f93dd7c483b001e6ddf708c85c9d536"
   dependencies:
-    mongoose-originals "^1.0.1"
+    mongoose-originals "^1.1.0"
     shortid "^2.2.8"
 
 mongoose@^4.8:
