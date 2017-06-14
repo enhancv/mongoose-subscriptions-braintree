@@ -30,11 +30,12 @@ describe(
                 percent: "10",
                 usedCountMax: 2,
             });
-            let originalCustomer = null;
 
-            processor.on("event", eventSpy);
+            return coupon.save().then(coupon => {
+                let originalCustomer = null;
 
-            return coupon.save().then(() => {
+                processor.on("event", eventSpy);
+
                 const customer = new Customer({
                     name: "Pesho Peshev",
                     phone: "+35988911111",
@@ -80,8 +81,7 @@ describe(
                     .addDiscounts(subscription => [DiscountCoupon.build(subscription, coupon)]);
 
                 return customer
-                    .save()
-                    .then(customer => customer.saveProcessor(processor))
+                    .saveProcessor(processor)
                     .then(customer => {
                         const customerObject = customer;
                         const subscriptionObject = customerObject.subscriptions[0];

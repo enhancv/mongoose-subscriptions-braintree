@@ -428,9 +428,9 @@ mongoose-originals@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/mongoose-originals/-/mongoose-originals-1.1.0.tgz#f4c57537a3148b64b22e0e6b82129bd51f851fd4"
 
-mongoose-subscriptions@^1.7.2:
-  version "1.7.3"
-  resolved "https://registry.yarnpkg.com/mongoose-subscriptions/-/mongoose-subscriptions-1.7.3.tgz#055c8f576f93dd7c483b001e6ddf708c85c9d536"
+mongoose-subscriptions@^1.7.5:
+  version "1.7.5"
+  resolved "https://registry.yarnpkg.com/mongoose-subscriptions/-/mongoose-subscriptions-1.7.5.tgz#a173213b7a5355e4fc450423762c90f35cff8f91"
   dependencies:
     mongoose-originals "^1.1.0"
     shortid "^2.2.8"
