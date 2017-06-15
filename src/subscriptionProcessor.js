@@ -60,6 +60,7 @@ function processorFields(customer, subscription) {
             : null,
         descriptor: pick(["name", "phone", "url"], subscription.descriptor),
         discounts: processorDiscounts,
+        firstBillingDate: subscription.firstBillingDate,
     };
 
     return pickBy(identity, response);

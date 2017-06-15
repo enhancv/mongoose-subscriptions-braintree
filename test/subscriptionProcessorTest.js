@@ -141,6 +141,7 @@ describe(
                         ],
                         paymentMethodId: "three",
                         processor: { id: "gzsxjb", state: "saved" },
+                        firstBillingDate: "2016-09-29",
                     },
                 ],
             });
@@ -309,6 +310,7 @@ describe(
                         phone: "8899039032",
                         url: "example.com",
                     },
+                    firstBillingDate: new Date("2016-09-29"),
                     discounts: {
                         update: [
                             {
