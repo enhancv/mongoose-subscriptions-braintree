@@ -653,6 +653,8 @@ describe(
             };
 
             this.customer.subscriptions[0].processor.state = ProcessorItem.CHANGED;
+            // Should not update firstBillingDate
+            this.customer.subscriptions[0].firstBillingDate = new Date("2016-10-18");
 
             return subscriptionProcessor
                 .save(processor, this.customer, this.customer.subscriptions[0])

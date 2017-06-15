@@ -16,6 +16,7 @@ const {
     concat,
     differenceBy,
     curry,
+    omit,
 } = require("lodash/fp");
 
 function processorFieldsDiscounts(originalDiscounts, discounts) {
@@ -161,7 +162,7 @@ function save(processor, customer, subscription) {
     } else if (subscription.processor.state === ProcessorItem.CHANGED) {
         processor.emit("event", new Event(Event.SUBSCRIPTION, Event.UPDATING, data));
         return processor.gateway.subscription
-            .update(subscription.processor.id, data)
+            .update(subscription.processor.id, omit(["firstBillingDate"], data))
             .then(BraintreeError.guard)
             .then(processSave);
     } else if (subscription.processor.state === ProcessorItem.INITIAL) {
