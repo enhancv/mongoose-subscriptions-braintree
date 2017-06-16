@@ -51,4 +51,10 @@ class BraintreeProcessor extends AbstractProcessor {
     }
 }
 
+BraintreeProcessor.customer = customerProcessor;
+BraintreeProcessor.address = addressProcessor;
+BraintreeProcessor.paymentMethod = paymentMethodProcessor;
+BraintreeProcessor.subscription = subscriptionProcessor;
+BraintreeProcessor.transaction = transactionProcessor;
+
 module.exports = BraintreeProcessor;

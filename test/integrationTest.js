@@ -19,6 +19,39 @@ const processor = new BraintreeProcessor(gateway, [plan]);
 describe(
     "Customer",
     database([Customer, Coupon], () => {
+        it("Should expose processors", function() {
+            assert.ok(BraintreeProcessor.customer.fields, "Should expose customer fields method");
+            assert.ok(
+                BraintreeProcessor.customer.processorFields,
+                "Should expose customer processorFields method"
+            );
+            assert.ok(BraintreeProcessor.address.fields, "Should expose address fields method");
+            assert.ok(
+                BraintreeProcessor.address.processorFields,
+                "Should expose address processorFields method"
+            );
+            assert.ok(
+                BraintreeProcessor.paymentMethod.fields,
+                "Should expose paymentMethod fields method"
+            );
+            assert.ok(
+                BraintreeProcessor.paymentMethod.processorFields,
+                "Should expose paymentMethod processorFields method"
+            );
+            assert.ok(
+                BraintreeProcessor.subscription.fields,
+                "Should expose subscription fields method"
+            );
+            assert.ok(
+                BraintreeProcessor.subscription.processorFields,
+                "Should expose subscription processorFields method"
+            );
+            assert.ok(
+                BraintreeProcessor.transaction.fields,
+                "Should expose transaction fields method"
+            );
+        });
+
         it("Should be able to instantiate a Customer", function() {
             this.timeout(20000);
 
