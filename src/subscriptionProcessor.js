@@ -150,6 +150,7 @@ function save(processor, customer, subscription) {
 
     if (
         subscription.processor.state === ProcessorItem.CHANGED &&
+        subscription.original.status === braintree.Subscription.Status.Canceled &&
         subscription.status === braintree.Subscription.Status.Canceled
     ) {
         processor.emit("event", new Event(Event.SUBSCRIPTION, Event.CANCELING, data));
@@ -159,7 +160,10 @@ function save(processor, customer, subscription) {
             .then(processSave);
     } else if (subscription.processor.state === ProcessorItem.LOCAL) {
         return Promise.resolve(customer);
-    } else if (subscription.processor.state === ProcessorItem.CHANGED) {
+    } else if (
+        subscription.processor.state === ProcessorItem.CHANGED &&
+        subscription.status !== braintree.Subscription.Status.Canceled
+    ) {
         processor.emit("event", new Event(Event.SUBSCRIPTION, Event.UPDATING, data));
         return processor.gateway.subscription
             .update(subscription.processor.id, omit(["firstBillingDate"], data))
