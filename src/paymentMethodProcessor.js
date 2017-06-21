@@ -35,8 +35,10 @@ function fields(customer, paymentMethod) {
     } else if (paymentMethod.constructor.name === "PayPalAccount") {
         Object.assign(response, {
             __t: "PayPalAccount",
-            name: name.full(paymentMethod.payerInfo.firstName, paymentMethod.payerInfo.lastName),
-            payerId: paymentMethod.payerInfo.payerId,
+            name: paymentMethod.payerInfo
+                ? name.full(paymentMethod.payerInfo.firstName, paymentMethod.payerInfo.lastName)
+                : "",
+            payerId: paymentMethod.payerInfo ? paymentMethod.payerInfo.payerId : "",
             email: paymentMethod.email,
         });
     } else if (paymentMethod.constructor.name === "ApplePayCard") {

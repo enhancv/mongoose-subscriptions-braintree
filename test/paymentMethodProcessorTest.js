@@ -172,6 +172,33 @@ describe("paymentMethodProcessor", () => {
         assert.deepEqual(fields, expected);
     });
 
+    it("fields should map paypal account data into a model with incomplete data", function() {
+        const paymentMethod = new braintree.PayPalAccount({
+            token: "gpjt3m",
+            email: "test@example.com",
+            payerInfo: {
+                email: "test@example.com",
+            },
+            createdAt: "2016-09-29T16:12:26Z",
+            updatedAt: "2016-09-30T12:25:18Z",
+        });
+
+        const fields = paymentMethodProcessor.fields(this.customer, paymentMethod);
+
+        const expected = {
+            __t: "PayPalAccount",
+            email: "test@example.com",
+            processor: {
+                id: "gpjt3m",
+                state: ProcessorItem.SAVED,
+            },
+            createdAt: "2016-09-29T16:12:26Z",
+            updatedAt: "2016-09-30T12:25:18Z",
+        };
+
+        assert.deepEqual(fields, expected);
+    });
+
     it("fields should map apple pay data into a model", function() {
         const paymentMethod = new braintree.ApplePayCard({
             token: "gpjt3m",
