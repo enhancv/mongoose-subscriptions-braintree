@@ -159,8 +159,12 @@ describe("paymentMethodProcessor", () => {
         const expected = {
             __t: "PayPalAccount",
             email: "test@example.com",
-            name: "Pesho Peshev",
-            payerId: "H80319283012",
+            payerInfo: {
+                firstName: "Pesho",
+                lastName: "Peshev",
+                email: "test@example.com",
+                payerId: "H80319283012",
+            },
             processor: {
                 id: "gpjt3m",
                 state: ProcessorItem.SAVED,
@@ -191,6 +195,9 @@ describe("paymentMethodProcessor", () => {
             processor: {
                 id: "gpjt3m",
                 state: ProcessorItem.SAVED,
+            },
+            payerInfo: {
+                email: "test@example.com",
             },
             createdAt: "2016-09-29T16:12:26Z",
             updatedAt: "2016-09-30T12:25:18Z",
@@ -267,7 +274,7 @@ describe("paymentMethodProcessor", () => {
     it("save should call create endpoint on new payment method", function() {
         const gateway = {
             paymentMethod: {
-                create: sinon.stub().callsArgWith(1, null, this.paymentMethodResult),
+                create: sinon.stub().resolves(this.paymentMethodResult),
             },
         };
         const processor = {
@@ -302,7 +309,7 @@ describe("paymentMethodProcessor", () => {
     it("save should call update endpoint on existing address", function() {
         const gateway = {
             paymentMethod: {
-                update: sinon.stub().callsArgWith(2, null, this.paymentMethodResult),
+                update: sinon.stub().resolves(this.paymentMethodResult),
             },
         };
         const processor = {
@@ -352,7 +359,7 @@ describe("paymentMethodProcessor", () => {
 
         const gateway = {
             paymentMethod: {
-                update: sinon.stub().callsArgWith(2, apiError),
+                update: sinon.stub().rejects(apiError),
             },
         };
         const processor = {
@@ -377,9 +384,7 @@ describe("paymentMethodProcessor", () => {
     it("save should send a rejection on api result failure", function() {
         const gateway = {
             paymentMethod: {
-                update: sinon
-                    .stub()
-                    .callsArgWith(2, null, { success: false, message: "some error" }),
+                update: sinon.stub().resolves({ success: false, message: "some error" }),
             },
         };
         const processor = {

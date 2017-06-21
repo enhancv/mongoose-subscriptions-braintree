@@ -35,10 +35,7 @@ function fields(customer, paymentMethod) {
     } else if (paymentMethod.constructor.name === "PayPalAccount") {
         Object.assign(response, {
             __t: "PayPalAccount",
-            name: paymentMethod.payerInfo
-                ? name.full(paymentMethod.payerInfo.firstName, paymentMethod.payerInfo.lastName)
-                : "",
-            payerId: paymentMethod.payerInfo ? paymentMethod.payerInfo.payerId : "",
+            payerInfo: paymentMethod.payerInfo,
             email: paymentMethod.email,
         });
     } else if (paymentMethod.constructor.name === "ApplePayCard") {
@@ -79,39 +76,35 @@ function fields(customer, paymentMethod) {
 function save(processor, customer, paymentMethod, index) {
     const data = processorFields(customer, paymentMethod);
 
-    return new Promise((resolve, reject) => {
-        function callback(err, result) {
-            if (err) {
-                reject(err);
-            } else if (result.success) {
-                processor.emit("event", new Event(Event.PAYMENT_METHOD, Event.SAVED, result));
+    function processSave(result) {
+        processor.emit("event", new Event(Event.PAYMENT_METHOD, Event.SAVED, result));
 
-                customer.paymentMethods[index] = customer.paymentMethods.create(
-                    Object.assign(
-                        paymentMethod.toObject(),
-                        fields(customer, result.paymentMethod),
-                        { nonce: null }
-                    )
-                );
-                customer.markModified(`paymentMethods.${index}`);
+        customer.paymentMethods[index] = customer.paymentMethods.create(
+            Object.assign(paymentMethod.toObject(), fields(customer, result.paymentMethod), {
+                nonce: null,
+            })
+        );
+        customer.markModified(`paymentMethods.${index}`);
 
-                resolve(customer);
-            } else {
-                reject(new BraintreeError(result));
-            }
-        }
+        return customer;
+    }
 
-        if (paymentMethod.processor.state === ProcessorItem.CHANGED) {
-            processor.emit("event", new Event(Event.PAYMENT_METHOD, Event.UPDATING, data));
-            processor.gateway.paymentMethod.update(paymentMethod.processor.id, data, callback);
-        } else if (paymentMethod.processor.state === ProcessorItem.INITIAL) {
-            data.customerId = customer.processor.id;
-            processor.emit("event", new Event(Event.PAYMENT_METHOD, Event.CREATING, data));
-            processor.gateway.paymentMethod.create(data, callback);
-        } else {
-            resolve(customer);
-        }
-    });
+    if (paymentMethod.processor.state === ProcessorItem.CHANGED) {
+        processor.emit("event", new Event(Event.PAYMENT_METHOD, Event.UPDATING, data));
+        return processor.gateway.paymentMethod
+            .update(paymentMethod.processor.id, data)
+            .then(BraintreeError.guard)
+            .then(processSave);
+    } else if (paymentMethod.processor.state === ProcessorItem.INITIAL) {
+        data.customerId = customer.processor.id;
+        processor.emit("event", new Event(Event.PAYMENT_METHOD, Event.CREATING, data));
+        return processor.gateway.paymentMethod
+            .create(data)
+            .then(BraintreeError.guard)
+            .then(processSave);
+    } else {
+        return Promise.resolve(customer);
+    }
 }
 
 module.exports = {
