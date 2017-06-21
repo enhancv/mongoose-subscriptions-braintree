@@ -12,6 +12,7 @@ const {
     map,
     negate,
     get,
+    getOr,
     isEmpty,
     concat,
     differenceBy,
@@ -50,7 +51,7 @@ function processorFieldsDiscounts(originalDiscounts, discounts) {
 function processorFields(customer, subscription) {
     const paymentMethod = customer.paymentMethods.id(subscription.paymentMethodId);
     const processorDiscounts = processorFieldsDiscounts(
-        subscription.original.discounts,
+        getOr([], "original.discounts", subscription),
         subscription.discounts
     );
 
@@ -114,7 +115,6 @@ function fields(customer, originalDiscounts, subscription) {
 function cancel(processor, customer, subscription) {
     ProcessorItem.validateIsSaved(customer, "Customer");
     ProcessorItem.validateIsSaved(subscription, "Subscription");
-    subscription.initOriginals();
 
     processor.emit("event", new Event(Event.SUBSCRIPTION, Event.CANCELING, subscription));
 
@@ -127,8 +127,6 @@ function cancel(processor, customer, subscription) {
 }
 
 function save(processor, customer, subscription) {
-    subscription.initOriginals();
-
     const data = processorFields(customer, subscription);
 
     function processSave(result) {
@@ -150,7 +148,7 @@ function save(processor, customer, subscription) {
 
     if (
         subscription.processor.state === ProcessorItem.CHANGED &&
-        subscription.original.status === braintree.Subscription.Status.Canceled &&
+        get("original.status", subscription) !== braintree.Subscription.Status.Canceled &&
         subscription.status === braintree.Subscription.Status.Canceled
     ) {
         processor.emit("event", new Event(Event.SUBSCRIPTION, Event.CANCELING, data));
