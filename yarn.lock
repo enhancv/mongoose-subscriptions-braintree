@@ -432,9 +432,9 @@ mongoose-originals@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/mongoose-originals/-/mongoose-originals-1.1.0.tgz#f4c57537a3148b64b22e0e6b82129bd51f851fd4"
 
-mongoose-subscriptions@^1.7.8:
-  version "1.7.8"
-  resolved "https://registry.yarnpkg.com/mongoose-subscriptions/-/mongoose-subscriptions-1.7.8.tgz#c0eef8c215c20c40be29c8ee1ba6e83f185b75e8"
+mongoose-subscriptions@^1.7.11:
+  version "1.7.11"
+  resolved "https://registry.yarnpkg.com/mongoose-subscriptions/-/mongoose-subscriptions-1.7.11.tgz#f4557ab1eebf187ec3ff0abc91b96b60ff9ef554"
   dependencies:
     addmonths "^0.2.0"
     mongoose-originals "^1.1.0"

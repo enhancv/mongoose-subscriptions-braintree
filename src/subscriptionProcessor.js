@@ -49,7 +49,6 @@ function processorFieldsDiscounts(originalDiscounts, discounts) {
 }
 
 function processorFields(customer, subscription) {
-    const paymentMethod = customer.paymentMethods.id(subscription.paymentMethodId);
     const processorDiscounts = processorFieldsDiscounts(
         getOr([], "original.discounts", subscription),
         subscription.discounts
@@ -57,9 +56,10 @@ function processorFields(customer, subscription) {
 
     const response = {
         planId: subscription.plan.processorId,
-        paymentMethodToken: paymentMethod
-            ? ProcessorItem.validateIsSaved(paymentMethod).processor.id
-            : null,
+        paymentMethodToken: ProcessorItem.getProcessorId(
+            subscription.paymentMethodId,
+            customer.paymentMethods
+        ),
         descriptor: pick(["name", "phone", "url"], subscription.descriptor),
         discounts: processorDiscounts,
         firstBillingDate: subscription.firstBillingDate,

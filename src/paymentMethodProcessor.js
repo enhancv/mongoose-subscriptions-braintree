@@ -6,9 +6,10 @@ const { get, pickBy, identity, curry } = require("lodash/fp");
 
 function processorFields(customer, paymentMethod) {
     const response = {
-        billingAddressId: paymentMethod.billingAddressId
-            ? get("processor.id", customer.addresses.id(paymentMethod.billingAddressId))
-            : null,
+        billingAddressId: ProcessorItem.getProcessorId(
+            paymentMethod.billingAddressId,
+            customer.addresses
+        ),
         paymentMethodNonce: paymentMethod.nonce,
         options: customer.defaultPaymentMethodId === paymentMethod.id
             ? { makeDefault: true }
@@ -18,49 +19,53 @@ function processorFields(customer, paymentMethod) {
     return pickBy(identity, response);
 }
 
-function fields(customer, paymentMethod) {
-    const response = {};
+function descriminatorFields(paymentMethod) {
+    switch (paymentMethod.constructor.name) {
+        case "CreditCard":
+            return {
+                __t: "CreditCard",
+                maskedNumber: paymentMethod.maskedNumber,
+                countryOfIssuance: paymentMethod.countryOfIssuance,
+                issuingBank: paymentMethod.issuingBank,
+                cardType: paymentMethod.cardType,
+                cardholderName: paymentMethod.cardholderName,
+                expirationMonth: paymentMethod.expirationMonth,
+                expirationYear: paymentMethod.expirationYear,
+            };
 
-    if (paymentMethod.constructor.name === "CreditCard") {
-        Object.assign(response, {
-            __t: "CreditCard",
-            maskedNumber: paymentMethod.maskedNumber,
-            countryOfIssuance: paymentMethod.countryOfIssuance,
-            issuingBank: paymentMethod.issuingBank,
-            cardType: paymentMethod.cardType,
-            cardholderName: paymentMethod.cardholderName,
-            expirationMonth: paymentMethod.expirationMonth,
-            expirationYear: paymentMethod.expirationYear,
-        });
-    } else if (paymentMethod.constructor.name === "PayPalAccount") {
-        Object.assign(response, {
-            __t: "PayPalAccount",
-            payerInfo: paymentMethod.payerInfo,
-            email: paymentMethod.email,
-        });
-    } else if (paymentMethod.constructor.name === "ApplePayCard") {
-        Object.assign(response, {
-            __t: "ApplePayCard",
-            cardType: paymentMethod.cardType,
-            paymentInstrumentName: paymentMethod.paymentInstrumentName,
-            expirationMonth: paymentMethod.expirationMonth,
-            expirationYear: paymentMethod.expirationYear,
-        });
-    } else if (paymentMethod.constructor.name === "AndroidPayCard") {
-        Object.assign(response, {
-            __t: "AndroidPayCard",
-            sourceCardLast4: paymentMethod.sourceCardLast4,
-            virtualCardLast4: paymentMethod.virtualCardLast4,
-            sourceCardType: paymentMethod.sourceCardType,
-            virtualCardType: paymentMethod.virtualCardType,
-            expirationMonth: paymentMethod.expirationMonth,
-            expirationYear: paymentMethod.expirationYear,
-        });
+        case "PayPalAccount":
+            return {
+                __t: "PayPalAccount",
+                payerInfo: paymentMethod.payerInfo,
+                email: paymentMethod.email,
+            };
+
+        case "ApplePayCard":
+            return {
+                __t: "ApplePayCard",
+                cardType: paymentMethod.cardType,
+                paymentInstrumentName: paymentMethod.paymentInstrumentName,
+                expirationMonth: paymentMethod.expirationMonth,
+                expirationYear: paymentMethod.expirationYear,
+            };
+
+        case "AndroidPayCard":
+            return {
+                __t: "AndroidPayCard",
+                sourceCardLast4: paymentMethod.sourceCardLast4,
+                virtualCardLast4: paymentMethod.virtualCardLast4,
+                sourceCardType: paymentMethod.sourceCardType,
+                virtualCardType: paymentMethod.virtualCardType,
+                expirationMonth: paymentMethod.expirationMonth,
+                expirationYear: paymentMethod.expirationYear,
+            };
     }
+}
 
+function fields(customer, paymentMethod) {
     const billingAddressId = get("billingAddress.id", paymentMethod);
 
-    Object.assign(response, {
+    const response = Object.assign({}, descriminatorFields(paymentMethod), {
         processor: {
             id: paymentMethod.token,
             state: ProcessorItem.SAVED,
