@@ -271,6 +271,87 @@ describe("paymentMethodProcessor", () => {
         assert.deepEqual(fields, expected);
     });
 
+    it("save should add address when the result has one and no address id was given", function() {
+        const paymentMethodResult = {
+            success: true,
+            paymentMethod: new braintree.CreditCard({
+                billingAddress: {
+                    id: "test-id",
+                    company: "Example company",
+                    firstName: "Pesho",
+                    lastName: "Peshev Stoevski",
+                    countryCodeAlpha2: "BG",
+                    locality: "Sofia",
+                    streetAddress: "Tsarigradsko Shose 4",
+                    extendedAddress: "floor 3",
+                    postalCode: "1000",
+                    createdAt: "2016-09-29T16:12:26Z",
+                    updatedAt: "2016-09-30T12:25:18Z",
+                },
+                token: "gpjt3m",
+                cardholderName: "Pesho Peshev",
+                bin: "4111111",
+                last4: "1111",
+                expirationMonth: "12",
+                expirationYear: "2018",
+                cardType: "Visa",
+                countryOfIssuance: "GBR",
+                issuingBank: "HSBC Bank PLC",
+                createdAt: "2016-09-29T16:12:26Z",
+                updatedAt: "2016-09-30T12:25:18Z",
+            }),
+        };
+        const gateway = {
+            paymentMethod: {
+                create: sinon.stub().resolves(paymentMethodResult),
+            },
+        };
+        const processor = {
+            gateway,
+            emit: sinon.spy(),
+        };
+
+        const customer = new Customer({
+            name: "Pesho",
+            email: "seer@example.com",
+            ipAddress: "10.0.0.2",
+            processor: { id: "64601260", state: "saved" },
+            paymentMethods: [
+                {
+                    _id: "three",
+                    nonce: "fake-valid-nonce",
+                },
+            ],
+        });
+
+        return paymentMethodProcessor
+            .save(processor, customer, customer.paymentMethods[0], 0)
+            .then(customer => {
+                const paymentMethod = customer.paymentMethods[0];
+
+                sinon.assert.calledWith(
+                    processor.emit,
+                    "event",
+                    sinon.match.has("name", "paymentMethod").and(sinon.match.has("action", "saved"))
+                );
+                sinon.assert.calledOnce(gateway.paymentMethod.create);
+                sinon.assert.calledWith(
+                    gateway.paymentMethod.create,
+                    sinon.match.has("customerId", "64601260")
+                );
+                assert.equal(customer.addresses.length, 1);
+                assert.equal(paymentMethod.billingAddressId, customer.addresses[0]._id);
+                assert.deepEqual(customer.addresses[0].processor.toObject(), {
+                    id: "test-id",
+                    state: ProcessorItem.SAVED,
+                });
+                assert.deepEqual(paymentMethod.processor.toObject(), {
+                    id: "gpjt3m",
+                    state: ProcessorItem.SAVED,
+                });
+            });
+    });
+
     it("save should call create endpoint on new payment method", function() {
         const gateway = {
             paymentMethod: {

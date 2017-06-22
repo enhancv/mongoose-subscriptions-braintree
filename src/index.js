@@ -1,5 +1,6 @@
 const AbstractProcessor = require("mongoose-subscriptions").AbstractProcessor;
 const customerProcessor = require("./customerProcessor");
+const BraintreeError = require("./BraintreeError");
 const addressProcessor = require("./addressProcessor");
 const paymentMethodProcessor = require("./paymentMethodProcessor");
 const subscriptionProcessor = require("./subscriptionProcessor");
@@ -51,6 +52,7 @@ class BraintreeProcessor extends AbstractProcessor {
     }
 }
 
+BraintreeProcessor.BraintreeError = BraintreeError;
 BraintreeProcessor.customer = customerProcessor;
 BraintreeProcessor.address = addressProcessor;
 BraintreeProcessor.paymentMethod = paymentMethodProcessor;

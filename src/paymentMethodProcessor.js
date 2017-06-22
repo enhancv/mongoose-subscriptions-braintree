@@ -2,6 +2,7 @@ const ProcessorItem = require("mongoose-subscriptions").Schema.ProcessorItem;
 const Event = require("./Event");
 const BraintreeError = require("./BraintreeError");
 const name = require("./name");
+const addressProcessor = require("./addressProcessor");
 const { get, pickBy, identity, curry } = require("lodash/fp");
 
 function processorFields(customer, paymentMethod) {
@@ -83,6 +84,14 @@ function save(processor, customer, paymentMethod, index) {
 
     function processSave(result) {
         processor.emit("event", new Event(Event.PAYMENT_METHOD, Event.SAVED, result));
+
+        if (!paymentMethod.billingAddressId && result.paymentMethod.billingAddress) {
+            const newAddress = customer.addresses.create(
+                addressProcessor.fields(result.paymentMethod.billingAddress)
+            );
+            paymentMethod.billingAddressId = newAddress.id;
+            customer.addresses.push(newAddress);
+        }
 
         customer.paymentMethods[index] = customer.paymentMethods.create(
             Object.assign(paymentMethod.toObject(), fields(customer, result.paymentMethod), {

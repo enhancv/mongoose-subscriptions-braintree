@@ -1,6 +1,7 @@
 const assert = require("assert");
 const sinon = require("sinon");
 const database = require("./database");
+const braintree = require("braintree");
 const gateway = require("./gateway");
 const Schema = require("mongoose").Schema;
 const Customer = require("mongoose-subscriptions").Customer;
@@ -49,6 +50,51 @@ describe(
             assert.ok(
                 BraintreeProcessor.transaction.fields,
                 "Should expose transaction fields method"
+            );
+        });
+
+        it("Should return a braintree error on processor error", function() {
+            this.timeout(10000);
+
+            const customer = new Customer({
+                name: "Error Peshev",
+                phone: "+35988911111",
+                email: "error@example.com",
+                ipAddress: "10.0.0.2",
+                defaultPaymentMethodId: "three",
+                paymentMethods: [
+                    {
+                        _id: "three",
+                        nonce: braintree.Test.Nonces.ProcessorDeclinedVisa,
+                        billingAddressId: "one",
+                    },
+                ],
+                subscriptions: [
+                    {
+                        _id: "four",
+                        plan: plan,
+                        status: "Active",
+                        descriptor: {
+                            name: "Enhancv*Pro Plan",
+                            phone: "0888415433",
+                            url: "enhancv.com",
+                        },
+                        paymentMethodId: "three",
+                    },
+                ],
+            });
+
+            return customer.saveProcessor(processor).then(
+                () => {
+                    assert.ok(false, "Should fail for fake-processor-declined-visa-nonce");
+                },
+                error => {
+                    assert.ok(error instanceof BraintreeProcessor.BraintreeError);
+                    assert.equal(
+                        error.verification.processorResponseDescription,
+                        BraintreeProcessor.BraintreeError.MESSAGES["2000"]
+                    );
+                }
             );
         });
 
