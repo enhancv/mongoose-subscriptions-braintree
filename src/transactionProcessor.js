@@ -3,51 +3,54 @@ const Event = require("./Event");
 const BraintreeError = require("./BraintreeError");
 const name = require("./name");
 const addressProcessor = require("./addressProcessor");
-const { curry, pick, map, pickBy, identity } = require("lodash/fp");
+const { curry, pick, map, pickBy, identity, get } = require("lodash/fp");
 
 function descriminatorFields(braintreeTransaction) {
     switch (braintreeTransaction.paymentInstrumentType) {
         case "credit_card":
             return {
                 __t: "TransactionCreditCard",
-                maskedNumber: braintreeTransaction.creditCard.maskedNumber,
-                countryOfIssuance: braintreeTransaction.creditCard.countryOfIssuance,
-                issuingBank: braintreeTransaction.creditCard.issuingBank,
-                cardType: braintreeTransaction.creditCard.cardType,
-                cardholderName: braintreeTransaction.creditCard.cardholderName,
-                expirationMonth: braintreeTransaction.creditCard.expirationMonth,
-                expirationYear: braintreeTransaction.creditCard.expirationYear,
+                maskedNumber: get("creditCard.maskedNumber", braintreeTransaction),
+                countryOfIssuance: get("creditCard.countryOfIssuance", braintreeTransaction),
+                issuingBank: get("creditCard.issuingBank", braintreeTransaction),
+                cardType: get("creditCard.cardType", braintreeTransaction),
+                cardholderName: get("creditCard.cardholderName", braintreeTransaction),
+                expirationMonth: get("creditCard.expirationMonth", braintreeTransaction),
+                expirationYear: get("creditCard.expirationYear", braintreeTransaction),
             };
 
         case "paypal_account":
             return {
                 __t: "TransactionPayPalAccount",
                 name: name.full(
-                    braintreeTransaction.paypalAccount.payerFirstName,
-                    braintreeTransaction.paypalAccount.payerLastName
+                    get("paypalAccount.payerFirstName", braintreeTransaction),
+                    get("paypalAccount.payerLastName", braintreeTransaction)
                 ),
-                payerId: braintreeTransaction.paypalAccount.payerId,
-                email: braintreeTransaction.paypalAccount.payerEmail,
+                payerId: get("paypalAccount.payerId", braintreeTransaction),
+                email: get("paypalAccount.payerEmail", braintreeTransaction),
             };
 
         case "apple_pay_card":
             return {
                 __t: "TransactionApplePayCard",
-                cardType: braintreeTransaction.applePayCard.cardType,
-                paymentInstrumentName: braintreeTransaction.applePayCard.paymentInstrumentName,
-                expirationMonth: braintreeTransaction.applePayCard.expirationMonth,
-                expirationYear: braintreeTransaction.applePayCard.expirationYear,
+                cardType: get("applePayCard.cardType", braintreeTransaction),
+                paymentInstrumentName: get(
+                    "applePayCard.paymentInstrumentName",
+                    braintreeTransaction
+                ),
+                expirationMonth: get("applePayCard.expirationMonth", braintreeTransaction),
+                expirationYear: get("applePayCard.expirationYear", braintreeTransaction),
             };
 
         case "android_pay_card":
             return {
                 __t: "AndroidPayCard",
-                sourceCardLast4: braintreeTransaction.androidPayCard.sourceCardLast4,
-                virtualCardLast4: braintreeTransaction.androidPayCard.virtualCardLast4,
-                sourceCardType: braintreeTransaction.androidPayCard.sourceCardType,
-                virtualCardType: braintreeTransaction.androidPayCard.virtualCardType,
-                expirationMonth: braintreeTransaction.androidPayCard.expirationMonth,
-                expirationYear: braintreeTransaction.androidPayCard.expirationYear,
+                sourceCardLast4: get("androidPayCard.sourceCardLast4", braintreeTransaction),
+                virtualCardLast4: get("androidPayCard.virtualCardLast4", braintreeTransaction),
+                sourceCardType: get("androidPayCard.sourceCardType", braintreeTransaction),
+                virtualCardType: get("androidPayCard.virtualCardType", braintreeTransaction),
+                expirationMonth: get("androidPayCard.expirationMonth", braintreeTransaction),
+                expirationYear: get("androidPayCard.expirationYear", braintreeTransaction),
             };
     }
 }
