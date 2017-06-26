@@ -8,49 +8,48 @@ const { curry, pick, map, pickBy, identity, get } = require("lodash/fp");
 function descriminatorFields(braintreeTransaction) {
     switch (braintreeTransaction.paymentInstrumentType) {
         case "credit_card":
+            const creditCard = braintreeTransaction.creditCard;
             return {
                 __t: "TransactionCreditCard",
-                maskedNumber: get("creditCard.maskedNumber", braintreeTransaction),
-                countryOfIssuance: get("creditCard.countryOfIssuance", braintreeTransaction),
-                issuingBank: get("creditCard.issuingBank", braintreeTransaction),
-                cardType: get("creditCard.cardType", braintreeTransaction),
-                cardholderName: get("creditCard.cardholderName", braintreeTransaction),
-                expirationMonth: get("creditCard.expirationMonth", braintreeTransaction),
-                expirationYear: get("creditCard.expirationYear", braintreeTransaction),
+                maskedNumber:
+                    creditCard.maskedNumber || `${creditCard.bin}******${creditCard.last4}`,
+                countryOfIssuance: creditCard.countryOfIssuance,
+                issuingBank: creditCard.issuingBank,
+                cardType: creditCard.cardType,
+                cardholderName: creditCard.cardholderName,
+                expirationMonth: creditCard.expirationMonth,
+                expirationYear: creditCard.expirationYear,
             };
 
         case "paypal_account":
+            const paypal = braintreeTransaction.paypal || braintreeTransaction.paypalAccount || {};
             return {
                 __t: "TransactionPayPalAccount",
-                name: name.full(
-                    get("paypalAccount.payerFirstName", braintreeTransaction),
-                    get("paypalAccount.payerLastName", braintreeTransaction)
-                ),
-                payerId: get("paypalAccount.payerId", braintreeTransaction),
-                email: get("paypalAccount.payerEmail", braintreeTransaction),
+                name: name.full(paypal.payerFirstName, paypal.payerLastName),
+                payerId: paypal.payerId,
+                email: paypal.payerEmail,
             };
 
         case "apple_pay_card":
+            const applePayCard = braintreeTransaction;
             return {
                 __t: "TransactionApplePayCard",
-                cardType: get("applePayCard.cardType", braintreeTransaction),
-                paymentInstrumentName: get(
-                    "applePayCard.paymentInstrumentName",
-                    braintreeTransaction
-                ),
-                expirationMonth: get("applePayCard.expirationMonth", braintreeTransaction),
-                expirationYear: get("applePayCard.expirationYear", braintreeTransaction),
+                cardType: applePayCard.cardType,
+                paymentInstrumentName: get("paymentInstrumentName", applePayCard),
+                expirationMonth: applePayCard.expirationMonth,
+                expirationYear: applePayCard.expirationYear,
             };
 
         case "android_pay_card":
+            const androidPayCard = braintreeTransaction;
             return {
                 __t: "AndroidPayCard",
-                sourceCardLast4: get("androidPayCard.sourceCardLast4", braintreeTransaction),
-                virtualCardLast4: get("androidPayCard.virtualCardLast4", braintreeTransaction),
-                sourceCardType: get("androidPayCard.sourceCardType", braintreeTransaction),
-                virtualCardType: get("androidPayCard.virtualCardType", braintreeTransaction),
-                expirationMonth: get("androidPayCard.expirationMonth", braintreeTransaction),
-                expirationYear: get("androidPayCard.expirationYear", braintreeTransaction),
+                sourceCardLast4: androidPayCard.sourceCardLast4,
+                virtualCardLast4: androidPayCard.virtualCardLast4,
+                sourceCardType: androidPayCard.sourceCardType,
+                virtualCardType: androidPayCard.virtualCardType,
+                expirationMonth: androidPayCard.expirationMonth,
+                expirationYear: androidPayCard.expirationYear,
             };
     }
 }
