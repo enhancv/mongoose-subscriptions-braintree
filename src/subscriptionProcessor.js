@@ -18,6 +18,8 @@ const {
     differenceBy,
     curry,
     omit,
+    uniqWith,
+    isEqual,
 } = require("lodash/fp");
 
 function processorFieldsDiscounts(originalDiscounts, discounts) {
@@ -100,7 +102,10 @@ function fields(customer, originalDiscounts, subscription) {
         descriptor: subscription.descriptor,
         status: subscription.status,
         price: subscription.price,
-        statusHistory: map(pick(["timestamp", "status"]), subscription.statusHistory),
+        statusHistory: uniqWith(
+            (a, b) => isEqual(a, b),
+            map(pick(["timestamp", "status"]), subscription.statusHistory)
+        ),
         discounts: fieldsDiscounts(originalDiscounts, subscription.discounts),
         firstBillingDate: subscription.firstBillingDate,
         paymentMethodId: ProcessorItem.getId(
