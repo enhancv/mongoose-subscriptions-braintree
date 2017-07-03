@@ -16,7 +16,7 @@
   },
   "peerDependencies": {
     "braintree": "^2.0",
-    "mongoose-subscriptions": "^1.7"
+    "mongoose-subscriptions": "^1.8"
   },
   "devDependencies": {
     "braintree": "^2.1.1",
@@ -24,7 +24,7 @@
     "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
     "mongoose": "^4.8",
-    "mongoose-subscriptions": "^1.7.11",
+    "mongoose-subscriptions": "^1.8.0",
     "prettier": "^1.4.4",
     "sinon": "^2.1.0"
   }

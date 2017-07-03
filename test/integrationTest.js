@@ -252,7 +252,7 @@ describe(
                             },
                             group: "General",
                             name: "Testing JKALSD",
-                            numberOfBillingCycles: 1,
+                            numberOfBillingCycles: 2,
                             processor: { id: "DiscountCoupon", state: "saved" },
                         });
 
