@@ -6,6 +6,7 @@ const gateway = require("./gateway");
 const Schema = require("mongoose").Schema;
 const Customer = require("mongoose-subscriptions").Customer;
 const DiscountCoupon = require("mongoose-subscriptions").Schema.Discount.DiscountCoupon;
+const DiscountAmount = require("mongoose-subscriptions").Schema.Discount.DiscountAmount;
 const Coupon = require("mongoose-subscriptions").Coupon;
 const BraintreeProcessor = require("../src");
 
@@ -297,6 +298,28 @@ describe(
                             },
                         });
 
+                        customer.subscriptions
+                            .id("four")
+                            .addDiscounts(subscription => [
+                                DiscountAmount.build(subscription, "some amount", 2),
+                            ]);
+
+                        return customer.saveProcessor(processor);
+                    })
+                    .then(customer => {
+                        const subscription = customer.toObject().subscriptions[0];
+
+                        assert.deepEqual(subscription.discounts, [
+                            {
+                                processor: { state: "saved", id: "DiscountAmount" },
+                                numberOfBillingCycles: 1,
+                                group: "General",
+                                __t: "DiscountAmount",
+                                name: "some amount",
+                                amount: 2,
+                            },
+                        ]);
+
                         return customer.cancelProcessor(processor, "four");
                     })
                     .then(customer => {
@@ -304,7 +327,7 @@ describe(
                         const transaction = customer.transactions[0];
 
                         assert.equal(subscription.status, "Canceled");
-                        assert.equal(subscription.statusHistory.length, 2);
+                        assert.equal(subscription.statusHistory.length, 3);
 
                         sinon.assert.match(subscription.statusHistory[0], {
                             timestamp: sinon.match.date,
@@ -312,6 +335,11 @@ describe(
                         });
 
                         sinon.assert.match(subscription.statusHistory[1], {
+                            timestamp: sinon.match.date,
+                            status: "Active",
+                        });
+
+                        sinon.assert.match(subscription.statusHistory[2], {
                             timestamp: sinon.match.date,
                             status: "Active",
                         });
@@ -441,6 +469,8 @@ describe(
                             { name: "paymentMethod", action: "creating" },
                             { name: "paymentMethod", action: "saved" },
                             { name: "subscription", action: "creating" },
+                            { name: "subscription", action: "saved" },
+                            { name: "subscription", action: "updating" },
                             { name: "subscription", action: "saved" },
                             { name: "subscription", action: "canceling" },
                             { name: "subscription", action: "canceled" },

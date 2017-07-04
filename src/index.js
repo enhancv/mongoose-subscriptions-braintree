@@ -1,4 +1,5 @@
 const AbstractProcessor = require("mongoose-subscriptions").AbstractProcessor;
+const ProcessorItem = require("mongoose-subscriptions").Schema.ProcessorItem;
 const customerProcessor = require("./customerProcessor");
 const BraintreeError = require("./BraintreeError");
 const addressProcessor = require("./addressProcessor");
@@ -17,17 +18,36 @@ class BraintreeProcessor extends AbstractProcessor {
         return customerProcessor.load(this, customer);
     }
 
+    setOriginalSnapshots(customer) {
+        ["addresses", "subscriptions", "paymentMethods"].forEach(collectionName => {
+            customer[collectionName].forEach(item => (item.originalSnapshot = item.original));
+        });
+        return customer;
+    }
+
+    clearOriginalSnapshots(customer) {
+        ["addresses", "subscriptions", "paymentMethods"].forEach(collectionName => {
+            customer[collectionName].forEach(item => delete item.originalSnapshot);
+        });
+        return customer;
+    }
+
     save(customer) {
         const saveAddress = addressProcessor.save(this, customer);
         const savePaymentMethod = paymentMethodProcessor.save(this, customer);
         const saveSubscription = subscriptionProcessor.save(this, customer);
 
+        this.setOriginalSnapshots(customer);
+
         return customerProcessor
             .save(this, customer)
+            .then(() => customer.save())
             .then(() => Promise.all(customer.addresses.map(saveAddress)))
+            .then(() => customer.save())
             .then(() => Promise.all(customer.paymentMethods.map(savePaymentMethod)))
+            .then(() => customer.save())
             .then(() => Promise.all(customer.subscriptions.map(saveSubscription)))
-            .then(() => customer);
+            .then(() => this.clearOriginalSnapshots(customer));
     }
 
     cancelSubscription(customer, subscriptionId) {
