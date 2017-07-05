@@ -51,7 +51,7 @@ function processorFieldsDiscounts(originalDiscounts, discounts) {
 
 function processorFields(customer, subscription) {
     const originalDiscounts =
-        get("originalSnapshot.discounts", subscription) ||
+        get("snapshotOriginal.discounts", subscription) ||
         get("original.discounts", subscription) ||
         [];
 
@@ -135,7 +135,7 @@ function cancel(processor, customer, subscription) {
 function save(processor, customer, subscription) {
     const data = processorFields(customer, subscription);
     const originalStatus =
-        get("originalSnapshot.status", subscription) || get("original.status", subscription);
+        get("snapshotOriginal.status", subscription) || get("original.status", subscription);
 
     function processSave(result) {
         processor.emit("event", new Event(Event.SUBSCRIPTION, Event.SAVED, result));
