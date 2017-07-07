@@ -70,9 +70,9 @@ describe(
                     planId: "monthly",
                     price: "14.90",
                     status: "Active",
-                    trialDuration: null,
-                    trialDurationUnit: null,
-                    trialPeriod: false,
+                    trialDuration: 5,
+                    trialDurationUnit: "day",
+                    trialPeriod: true,
                     descriptor: {
                         name: "Enhancv*Pro Plan",
                         phone: "0888415433",
@@ -142,6 +142,9 @@ describe(
                         paymentMethodId: "three",
                         processor: { id: "gzsxjb", state: "saved" },
                         firstBillingDate: "2016-09-29",
+                        trialDuration: 5,
+                        trialDurationUnit: "day",
+                        isTrial: true,
                     },
                 ],
             });
@@ -310,6 +313,9 @@ describe(
                         phone: "8899039032",
                         url: "example.com",
                     },
+                    trialPeriod: true,
+                    trialDurationUnit: "day",
+                    trialDuration: 5,
                     firstBillingDate: new Date("2016-09-29"),
                     discounts: {
                         update: [
@@ -452,6 +458,9 @@ describe(
                     phone: "0888415433",
                     url: "enhancv.com",
                 },
+                isTrial: true,
+                trialDuration: 5,
+                trialDurationUnit: "day",
                 status: "Active",
                 statusHistory: [
                     {

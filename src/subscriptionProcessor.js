@@ -63,6 +63,9 @@ function processorFields(customer, subscription) {
             subscription.paymentMethodId,
             customer.paymentMethods
         ),
+        trialPeriod: subscription.isTrial,
+        trialDuration: subscription.trialDuration,
+        trialDurationUnit: subscription.trialDurationUnit,
         descriptor: pick(["name", "phone", "url"], subscription.descriptor),
         discounts: processorDiscounts,
         firstBillingDate: subscription.firstBillingDate,
@@ -109,6 +112,9 @@ function fields(customer, originalDiscounts, subscription) {
         ),
         discounts: fieldsDiscounts(originalDiscounts, subscription.discounts),
         firstBillingDate: subscription.firstBillingDate,
+        isTrial: subscription.trialPeriod,
+        trialDuration: subscription.trialDuration,
+        trialDurationUnit: subscription.trialDurationUnit,
         paymentMethodId: ProcessorItem.getId(
             subscription.paymentMethodToken,
             customer.paymentMethods
