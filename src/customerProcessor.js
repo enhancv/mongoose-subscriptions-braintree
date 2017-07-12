@@ -6,7 +6,7 @@ const addressProcessor = require("./addressProcessor");
 const paymentMethodProcessor = require("./paymentMethodProcessor");
 const subscriptionProcessor = require("./subscriptionProcessor");
 const transactionProcessor = require("./transactionProcessor");
-const { getOr, uniqBy, get, flatten, map, orderBy, curry, set, uniqWith } = require("lodash/fp");
+const { getOr, uniqBy, get, flatten, map, orderBy, curry, set } = require("lodash/fp");
 
 const ProcessorItem = main.Schema.ProcessorItem;
 
@@ -121,7 +121,15 @@ function load(processor, customer) {
             transactionProcessor.fields(customer)
         );
 
-        customer.transactions = uniqWith((a, b) => a._id === b._id, customer.transactions);
+        customer.subscriptions = uniqBy(
+            subscription => subscription.processor.id || subscription._id,
+            customer.subscriptions
+        );
+        customer.paymentMethods = uniqBy(
+            paymentMethod => paymentMethod.processor.id || paymentMethod._id,
+            customer.paymentMethods
+        );
+        customer.transactions = uniqBy(transaction => transaction._id, customer.transactions);
 
         return customer;
     });
