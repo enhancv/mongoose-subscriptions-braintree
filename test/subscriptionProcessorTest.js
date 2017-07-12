@@ -394,6 +394,7 @@ describe(
                     __t: "DiscountAmount",
                     amount: 20,
                     numberOfBillingCycles: 2,
+                    currentBillingCycle: 1,
                     name: "Test",
                 },
                 {
@@ -402,6 +403,7 @@ describe(
                     amount: 20,
                     coupon: "test",
                     numberOfBillingCycles: 1,
+                    currentBillingCycle: 1,
                     name: "Test",
                 },
                 {
@@ -409,6 +411,7 @@ describe(
                     __t: "DiscountAmount",
                     amount: "2.00",
                     numberOfBillingCycles: 1,
+                    currentBillingCycle: 1,
                 },
             ];
 
@@ -445,6 +448,7 @@ describe(
                         __t: "DiscountAmount",
                         amount: 20,
                         numberOfBillingCycles: 2,
+                        currentBillingCycle: 1,
                         name: "Test",
                     },
                 ],
@@ -473,6 +477,10 @@ describe(
                     },
                 ],
                 firstBillingDate: "2016-09-29",
+                nextBillingDate: "2016-10-29",
+                billingDayOfMonth: 29,
+                billingPeriodEndDate: "2016-10-28",
+                billingPeriodStartDate: "2016-09-29",
             };
 
             assert.deepEqual(fields, expected);

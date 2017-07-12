@@ -89,6 +89,7 @@ function fieldsDiscounts(originalDiscounts, resultDiscounts) {
         const mapped = original || newDiscount;
 
         mapped.processor = { id: discount.id, state: ProcessorItem.SAVED };
+        mapped.currentBillingCycle = discount.currentBillingCycle;
 
         return mapped;
     });
@@ -119,6 +120,12 @@ function fields(customer, originalDiscounts, subscription) {
             subscription.paymentMethodToken,
             customer.paymentMethods
         ),
+        nextBillingDate: subscription.nextBillingDate,
+        failureCount: subscription.failureCount,
+        daysPastDue: subscription.daysPastDue,
+        billingPeriodEndDate: subscription.billingPeriodEndDate,
+        billingPeriodStartDate: subscription.billingPeriodStartDate,
+        billingDayOfMonth: subscription.billingDayOfMonth,
     };
 
     return pickBy(identity, response);

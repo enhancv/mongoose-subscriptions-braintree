@@ -312,6 +312,7 @@ describe(
                         assert.deepEqual(subscription.discounts, [
                             {
                                 processor: { state: "saved", id: "DiscountAmount" },
+                                currentBillingCycle: 0,
                                 numberOfBillingCycles: 1,
                                 group: "General",
                                 __t: "DiscountAmount",
