@@ -6,6 +6,21 @@ const addressProcessor = require("./addressProcessor");
 const paymentMethodProcessor = require("./paymentMethodProcessor");
 const subscriptionProcessor = require("./subscriptionProcessor");
 const transactionProcessor = require("./transactionProcessor");
+const { some } = require("lodash/fp");
+
+function isChanged(item) {
+    return [ProcessorItem.CHANGED, ProcessorItem.INITIAL].includes(item.processor.state);
+}
+
+function saveCollection(name, saveItem, customer) {
+    return some(isChanged, customer[name])
+        ? Promise.all(customer[name].map(saveItem(customer))).then(() => customer.save())
+        : Promise.resolve();
+}
+
+function saveCustomer(saveItem, customer) {
+    return isChanged(customer) ? saveItem(customer).then(() => customer.save()) : Promise.resolve();
+}
 
 class BraintreeProcessor extends AbstractProcessor {
     constructor(gateway, plans) {
@@ -19,18 +34,12 @@ class BraintreeProcessor extends AbstractProcessor {
     }
 
     save(customer) {
-        const saveAddress = addressProcessor.save(this, customer);
-        const savePaymentMethod = paymentMethodProcessor.save(this, customer);
-        const saveSubscription = subscriptionProcessor.save(this, customer);
-
-        return customerProcessor
-            .save(this, customer)
-            .then(() => customer.save())
-            .then(() => Promise.all(customer.addresses.map(saveAddress)))
-            .then(() => customer.save())
-            .then(() => Promise.all(customer.paymentMethods.map(savePaymentMethod)))
-            .then(() => customer.save())
-            .then(() => Promise.all(customer.subscriptions.map(saveSubscription)))
+        return saveCustomer(customerProcessor.save(this), customer)
+            .then(() => saveCollection("addresses", addressProcessor.save(this), customer))
+            .then(() =>
+                saveCollection("paymentMethods", paymentMethodProcessor.save(this), customer)
+            )
+            .then(() => saveCollection("subscriptions", subscriptionProcessor.save(this), customer))
             .then(() => customer);
     }
 
