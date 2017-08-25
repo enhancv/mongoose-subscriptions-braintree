@@ -151,6 +151,7 @@ describe(
                                 phone: "0888415433",
                                 url: "enhancv.com",
                             },
+                            currentBillingCycle: 1,
                             paymentMethodId: "three",
                         },
                     ],

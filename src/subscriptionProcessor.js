@@ -107,6 +107,7 @@ function fields(customer, originalDiscounts, subscription) {
         descriptor: subscription.descriptor,
         status: subscription.status,
         price: subscription.price,
+        currentBillingCycle: subscription.currentBillingCycle,
         statusHistory: uniqWith(
             (a, b) => isEqual(a, b),
             map(pick(["timestamp", "status"]), subscription.statusHistory)
