@@ -502,7 +502,7 @@ describe(
             this.customer.subscriptions[0].processor = { id: null, state: ProcessorItem.INITIAL };
 
             return subscriptionProcessor
-                .save(processor, this.customer, this.customer.subscriptions[0])
+                .save(processor, this.customer, this.customer.subscriptions[0], 0)
                 .then(customer => {
                     const subscription = this.customer.subscriptions[0];
 
@@ -536,7 +536,7 @@ describe(
             this.customer.subscriptions[0].status = "Canceled";
 
             return subscriptionProcessor
-                .save(processor, this.customer, this.customer.subscriptions[0])
+                .save(processor, this.customer, this.customer.subscriptions[0], 0)
                 .then(customer => {
                     const subscription = this.customer.subscriptions[0];
 
@@ -602,7 +602,7 @@ describe(
             };
 
             return subscriptionProcessor
-                .save(processor, this.customer, this.customer.subscriptions[0])
+                .save(processor, this.customer, this.customer.subscriptions[0], 0)
                 .catch(error => {
                     sinon.assert.calledWith(
                         processor.emit,
@@ -628,7 +628,7 @@ describe(
             };
 
             return subscriptionProcessor
-                .save(processor, this.customer, this.customer.subscriptions[0])
+                .save(processor, this.customer, this.customer.subscriptions[0], 0)
                 .then(customer => {
                     assert.equal(customer, this.customer);
                     sinon.assert.neverCalledWith(
@@ -649,7 +649,7 @@ describe(
             this.customer.subscriptions[0].processor.state = ProcessorItem.LOCAL;
 
             return subscriptionProcessor
-                .save(processor, this.customer, this.customer.subscriptions[0])
+                .save(processor, this.customer, this.customer.subscriptions[0], 0)
                 .then(customer => {
                     assert.equal(customer, this.customer);
                     sinon.assert.neverCalledWith(
@@ -676,7 +676,7 @@ describe(
             this.customer.subscriptions[0].firstBillingDate = new Date("2016-10-18");
 
             return subscriptionProcessor
-                .save(processor, this.customer, this.customer.subscriptions[0])
+                .save(processor, this.customer, this.customer.subscriptions[0], 0)
                 .then(customer => {
                     const subscription = this.customer.subscriptions[0];
 
@@ -708,7 +708,7 @@ describe(
             this.customer.subscriptions[0].processor.state = ProcessorItem.CHANGED;
 
             return subscriptionProcessor
-                .save(processor, this.customer, this.customer.subscriptions[0])
+                .save(processor, this.customer, this.customer.subscriptions[0], 0)
                 .catch(error => {
                     sinon.assert.neverCalledWith(
                         processor.emit,
@@ -733,7 +733,7 @@ describe(
             this.customer.subscriptions[0].processor.state = ProcessorItem.CHANGED;
 
             return subscriptionProcessor
-                .save(processor, this.customer, this.customer.subscriptions[0])
+                .save(processor, this.customer, this.customer.subscriptions[0], 0)
                 .catch(error => {
                     sinon.assert.neverCalledWith(
                         processor.emit,

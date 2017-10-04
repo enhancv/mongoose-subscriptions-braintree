@@ -108,6 +108,7 @@ describe(
                 numberOfBillingCycles: 2,
                 description: "For testing purposes",
                 percent: "10",
+                usedCount: 0,
                 usedCountMax: 2,
             });
 
@@ -249,7 +250,7 @@ describe(
                                 name: "Testing JKALSD",
                                 numberOfBillingCycles: 2,
                                 percent: 10,
-                                usedCount: 1,
+                                usedCount: 2,
                                 usedCountMax: 2,
                             },
                             name: "Testing JKALSD",

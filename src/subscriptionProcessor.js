@@ -146,7 +146,7 @@ function cancel(processor, customer, subscription) {
     });
 }
 
-function save(processor, customer, subscription) {
+function save(processor, customer, subscription, index) {
     const data = processorFields(customer, subscription);
     const originalStatus =
         get("snapshotOriginal.status", subscription) || get("original.status", subscription);
@@ -155,6 +155,7 @@ function save(processor, customer, subscription) {
         processor.emit("event", new Event(Event.SUBSCRIPTION, Event.SAVED, result));
 
         Object.assign(subscription, fields(customer, subscription.discounts, result.subscription));
+        customer.markModified(`subscriptions.${index}.discounts`);
 
         const transactions = map(
             transactionProcessor.fields(customer),
