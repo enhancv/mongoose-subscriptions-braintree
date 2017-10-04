@@ -252,9 +252,10 @@ describe(
                                 usedCount: 1,
                                 usedCountMax: 2,
                             },
-                            group: "General",
                             name: "Testing JKALSD",
                             numberOfBillingCycles: 2,
+                            currentBillingCycle: 1,
+                            preserve: false,
                             processor: { id: "DiscountCoupon", state: "saved" },
                         });
 
@@ -315,7 +316,7 @@ describe(
                                 processor: { state: "saved", id: "DiscountAmount" },
                                 currentBillingCycle: 0,
                                 numberOfBillingCycles: 1,
-                                group: "General",
+                                preserve: false,
                                 __t: "DiscountAmount",
                                 name: "some amount",
                                 amount: 2,
