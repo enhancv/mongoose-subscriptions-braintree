@@ -435,6 +435,62 @@ describe("paymentMethodProcessor", () => {
             });
     });
 
+    const isPaymentMethodChanged = [
+        {
+            name: "No change",
+            change: {},
+            expected: { three: false, four: false },
+        },
+        {
+            name: "Change if default changed",
+            customer: {
+                defaultPaymentMethodId: "four",
+            },
+            expected: { three: false, four: true },
+        },
+        {
+            name: "Change if nonce changed",
+            paymentMehtod1: { nonce: "some nonce" },
+            expected: { three: false, four: true },
+        },
+        {
+            name: "No change if billingAddressId same value",
+            paymentMehtod1: { billingAddressId: "one" },
+            expected: { three: false, four: false },
+        },
+        {
+            name: "Change if billingAddressId changed",
+            paymentMehtod1: { billingAddressId: "123" },
+            expected: { three: false, four: true },
+        },
+        {
+            name: "Nonce change if nonce same value",
+            paymentMehtod1: { nonce: null },
+            expected: { three: false, four: false },
+        },
+    ];
+
+    isPaymentMethodChanged.forEach(test => {
+        it(`isPaymentMethodChanged should return correct value for ${test.name}`, function() {
+            this.customer.initOriginals();
+            this.customer.paymentMethods[0].initOriginals();
+            this.customer.paymentMethods[1].initOriginals();
+
+            this.customer.set(test.customer || {});
+            this.customer.paymentMethods[0].set(test.paymentMehtod0 || {});
+            this.customer.paymentMethods[1].set(test.paymentMehtod1 || {});
+
+            Object.keys(test.expected).forEach(id => {
+                const result = paymentMethodProcessor.isPaymentMethodChanged(
+                    this.customer,
+                    this.customer.paymentMethods.id(id)
+                );
+
+                assert.equal(result, test.expected[id]);
+            });
+        });
+    });
+
     it("save should send a rejection on api error", function() {
         const apiError = new Error("error");
 

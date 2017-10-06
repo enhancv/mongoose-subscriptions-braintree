@@ -79,6 +79,18 @@ function fields(customer, paymentMethod) {
     return pickBy(identity, response);
 }
 
+function isPaymentMethodChanged(customer, paymentMethod) {
+    const original = paymentMethod.original || {};
+    const originalCustomer = customer.original || {};
+    const nonceChanged = paymentMethod.nonce !== original.nonce && paymentMethod.nonce;
+    const billingAddressIdChanged = paymentMethod.billingAddressId !== original.billingAddressId;
+    const defaultPaymentMethodChanged =
+        customer.defaultPaymentMethodId !== originalCustomer.defaultPaymentMethodId &&
+        customer.defaultPaymentMethodId === paymentMethod.id;
+
+    return Boolean(nonceChanged || billingAddressIdChanged || defaultPaymentMethodChanged);
+}
+
 function save(processor, customer, paymentMethod, index) {
     const data = processorFields(customer, paymentMethod);
 
@@ -103,7 +115,10 @@ function save(processor, customer, paymentMethod, index) {
         return customer;
     }
 
-    if (paymentMethod.processor.state === ProcessorItem.CHANGED) {
+    if (
+        paymentMethod.processor.state === ProcessorItem.CHANGED &&
+        isPaymentMethodChanged(customer, paymentMethod)
+    ) {
         processor.emit("event", new Event(Event.PAYMENT_METHOD, Event.UPDATING, data));
         return processor.gateway.paymentMethod
             .update(paymentMethod.processor.id, data)
@@ -124,5 +139,6 @@ function save(processor, customer, paymentMethod, index) {
 module.exports = {
     fields: curry(fields),
     processorFields: curry(processorFields),
+    isPaymentMethodChanged: curry(isPaymentMethodChanged),
     save: curry(save),
 };
