@@ -56,7 +56,10 @@ function save(processor, customer, address) {
     } else if (address.processor.state === ProcessorItem.INITIAL) {
         data.customerId = customer.processor.id;
         processor.emit("event", new Event(Event.ADDRESS, Event.CREATING, data));
-        return processor.gateway.address.create(data).then(BraintreeError.guard).then(processSave);
+        return processor.gateway.address
+            .create(data)
+            .then(BraintreeError.guard)
+            .then(processSave);
     } else {
         return Promise.resolve(customer);
     }

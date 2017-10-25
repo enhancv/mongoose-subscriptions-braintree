@@ -12,9 +12,8 @@ function processorFields(customer, paymentMethod) {
             customer.addresses
         ),
         paymentMethodNonce: paymentMethod.nonce,
-        options: customer.defaultPaymentMethodId === paymentMethod.id
-            ? { makeDefault: true }
-            : null,
+        options:
+            customer.defaultPaymentMethodId === paymentMethod.id ? { makeDefault: true } : null,
     };
 
     return pickBy(identity, response);
@@ -80,8 +79,8 @@ function fields(customer, paymentMethod) {
 }
 
 function isPaymentMethodChanged(customer, paymentMethod) {
-    const original = paymentMethod.original || {};
-    const originalCustomer = customer.original || {};
+    const original = paymentMethod._original || {};
+    const originalCustomer = customer._original || {};
     const nonceChanged = paymentMethod.nonce !== original.nonce && paymentMethod.nonce;
     const billingAddressIdChanged = paymentMethod.billingAddressId !== original.billingAddressId;
     const defaultPaymentMethodChanged =

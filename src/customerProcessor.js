@@ -53,7 +53,10 @@ function save(processor, customer) {
             .then(processSave);
     } else if (customer.processor.state === ProcessorItem.INITIAL) {
         processor.emit("event", new Event(Event.CUSTOMER, Event.CREATING, data));
-        return processor.gateway.customer.create(data).then(BraintreeError.guard).then(processSave);
+        return processor.gateway.customer
+            .create(data)
+            .then(BraintreeError.guard)
+            .then(processSave);
     } else {
         return Promise.resolve(customer);
     }
