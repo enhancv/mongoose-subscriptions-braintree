@@ -14,12 +14,20 @@ function isChanged(item) {
 
 function saveCollection(name, saveItem, customer) {
     return some(isChanged, customer[name])
-        ? Promise.all(customer[name].map(saveItem(customer))).then(() => customer.save())
+        ? Promise.all(customer[name].map(saveItem(customer))).then(() => {
+              delete customer.__v;
+              customer.save();
+          })
         : Promise.resolve();
 }
 
 function saveCustomer(saveItem, customer) {
-    return isChanged(customer) ? saveItem(customer).then(() => customer.save()) : Promise.resolve();
+    return isChanged(customer)
+        ? saveItem(customer).then(() => {
+              delete customer.__v;
+              customer.save();
+          })
+        : Promise.resolve();
 }
 
 class BraintreeProcessor extends AbstractProcessor {
