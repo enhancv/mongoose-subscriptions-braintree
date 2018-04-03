@@ -12,22 +12,26 @@ function isChanged(item) {
     return [ProcessorItem.CHANGED, ProcessorItem.INITIAL].includes(item.processor.state);
 }
 
-function saveCollection(name, saveItem, customer) {
-    return some(isChanged, customer[name])
-        ? Promise.all(customer[name].map(saveItem(customer))).then(() => {
-              delete customer.__v;
-              customer.save();
-          })
-        : Promise.resolve();
+async function saveCollection(name, saveItem, customer) {
+    if (!some(isChanged, customer[name])) {
+        return Promise.resolve(customer);
+    }
+
+    let _customer = customer;
+
+    for (let index = 0; index < _customer[name].length; index++) {
+        _customer = await saveItem(_customer, _customer[name][index], index);
+    }
+
+    return _customer.save();
 }
 
 function saveCustomer(saveItem, customer) {
-    return isChanged(customer)
-        ? saveItem(customer).then(() => {
-              delete customer.__v;
-              customer.save();
-          })
-        : Promise.resolve();
+    if (!isChanged(customer)) {
+        return Promise.resolve(customer);
+    }
+
+    return saveItem(customer).then(customer => customer.save());
 }
 
 class BraintreeProcessor extends AbstractProcessor {
@@ -43,12 +47,13 @@ class BraintreeProcessor extends AbstractProcessor {
 
     save(customer) {
         return saveCustomer(customerProcessor.save(this), customer)
-            .then(() => saveCollection("addresses", addressProcessor.save(this), customer))
-            .then(() =>
+            .then(customer => saveCollection("addresses", addressProcessor.save(this), customer))
+            .then(customer =>
                 saveCollection("paymentMethods", paymentMethodProcessor.save(this), customer)
             )
-            .then(() => saveCollection("subscriptions", subscriptionProcessor.save(this), customer))
-            .then(() => customer);
+            .then(customer =>
+                saveCollection("subscriptions", subscriptionProcessor.save(this), customer)
+            );
     }
 
     cancelSubscription(customer, subscriptionId) {
