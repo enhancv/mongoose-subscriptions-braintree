@@ -3,7 +3,7 @@ services: mongodb
 addons:
   code_climate:
     repo_token: 32d255d79fc556e0b47516b1172b39b4b1d07ed8aed2217bb24e86a283a9dce0
-node_js: 6
+node_js: 7
 cache:
   directories:
   - node_modules
