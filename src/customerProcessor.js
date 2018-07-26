@@ -27,8 +27,10 @@ function processorFields(customer) {
         phone: customer.phone,
         customFields: {
             ipAddress: customer.ipAddress,
-            countryCode: customer.defaultPaymentMethod()
-                ? customer.defaultPaymentMethod().countryCode
+            countryCode: customer.defaultPaymentMethod
+                ? customer.defaultPaymentMethod()
+                  ? customer.defaultPaymentMethod().countryCode
+                  : null
                 : null
         }
     };
