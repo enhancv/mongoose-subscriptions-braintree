@@ -51,6 +51,7 @@ describe("customerProcessor", () => {
             phone: "+3593809324",
             customFields: {
                 ipAddress: "10.0.0.2",
+                additionalEvidenceCountry: null,
             },
         };
 
@@ -1015,7 +1016,9 @@ describe("customerProcessor", () => {
             emit: sinon.spy(),
         };
 
-        const customer = new Customer({ processor: { id: "123", state: "saved" } });
+        const customer = new Customer({
+            processor: { id: "123", state: "saved" },
+        });
 
         return customerProcessor
             .load(processor, customer)
