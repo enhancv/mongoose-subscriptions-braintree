@@ -19,9 +19,7 @@ function processorFields(customer) {
         customFields: {
             ipAddress: customer.ipAddress,
             additionalEvidenceCountry: customer.defaultPaymentMethod
-                ? customer.defaultPaymentMethod()
-                  ? customer.defaultPaymentMethod().countryCode
-                  : null
+                ? get("countryCode", customer.defaultPaymentMethod())
                 : null,
         },
     };
