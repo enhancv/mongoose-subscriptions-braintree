@@ -52,6 +52,7 @@ describe("customerProcessor", () => {
             customFields: {
                 ipAddress: "10.0.0.2",
                 additionalEvidenceCountry: null,
+                additionalEvidenceType: null,
             },
         };
 

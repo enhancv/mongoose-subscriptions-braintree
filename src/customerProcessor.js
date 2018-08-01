@@ -21,7 +21,9 @@ function processorFields(customer) {
             additionalEvidenceCountry: customer.defaultPaymentMethod
                 ? get("countryCode", customer.defaultPaymentMethod())
                 : null,
-            additionalEvidenceType: "PayPal account country code",
+            additionalEvidenceType: customer.defaultPaymentMethod
+                ? "PayPal account country code"
+                : null,
         },
     };
 }
