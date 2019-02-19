@@ -18,6 +18,9 @@ const CANCELED = "canceled";
 const REFUND = "refund";
 const REFUNDED = "refunded";
 
+const VOID = "void";
+const VOIDED = "voided";
+
 class Event {
     constructor(name, action, context) {
         this.name = name;
@@ -42,5 +45,7 @@ Event.CANCELING = CANCELING;
 Event.CANCELED = CANCELED;
 Event.REFUND = REFUND;
 Event.REFUNDED = REFUNDED;
+Event.VOID = VOID;
+Event.VOIDED = VOIDED;
 
 module.exports = Event;

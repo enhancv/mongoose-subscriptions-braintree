@@ -73,6 +73,10 @@ class BraintreeProcessor extends AbstractProcessor {
         );
     }
 
+    voidTransaction(customer, transactionId) {
+        return transactionProcessor.void(this, customer, customer.transactions.id(transactionId));
+    }
+
     plan(processorId) {
         return this.plans.find(plan => plan.processorId === processorId);
     }
