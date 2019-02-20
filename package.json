@@ -1,6 +1,6 @@
 {
   "name": "mongoose-subscriptions-braintree",
-  "version": "1.7.3",
+  "version": "1.8.3",
   "description": "Braintree processor for mongoose-subscriptions",
   "main": "src/index.js",
   "repository": "git@github.com:enhancv/mongoose-subscriptions-braintree.git",
