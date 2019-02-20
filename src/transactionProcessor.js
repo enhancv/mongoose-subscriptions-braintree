@@ -135,10 +135,11 @@ function voidTransaction(processor, customer, transaction) {
     function processRefund(result) {
         processor.emit("event", new Event(Event.TRANSACTION, Event.VOIDED, result));
 
-        customer.transactions = customer.transactions.map(transaction =>
-            transaction.id === result.transaction.id
-                ? fields(customer, result.transaction)
-                : transaction
+        customer.transactions = customer.transactions.map(
+            transaction =>
+                transaction.id === result.transaction.id
+                    ? fields(customer, result.transaction)
+                    : transaction
         );
         return customer;
     }
