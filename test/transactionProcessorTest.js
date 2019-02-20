@@ -544,6 +544,292 @@ describe("transactionProcessor", () => {
             expirationMonth: "07",
             expirationYear: "2018",
         };
+
+        this.transactionCreditCardVoided = {
+            id: "9sc4zwjf",
+            status: "voided",
+            type: "credit",
+            currencyIsoCode: "USD",
+            amount: "14.90",
+            merchantAccountId: "exampleUSD",
+            subMerchantAccountId: null,
+            masterMerchantAccountId: null,
+            orderId: null,
+            createdAt: "2016-08-03T13:09:58Z",
+            updatedAt: "2016-08-03T23:40:08Z",
+            customer: {
+                id: "264704707",
+                firstName: "Pesho",
+                lastName: "Peshev",
+                company: null,
+                email: "keeletsang@example.com",
+                website: null,
+                phone: "11111111111",
+                fax: null,
+            },
+            billing: {
+                id: "dz",
+                firstName: "Pesho",
+                lastName: "Peshev",
+                company: null,
+                streetAddress: "Flat 3",
+                extendedAddress: "71 - 72 Princes Gate",
+                locality: "Black Lake",
+                region: null,
+                postalCode: "BLK120",
+                countryName: "United Kingdom",
+                countryCodeAlpha2: "GB",
+                countryCodeAlpha3: "GBR",
+                countryCodeNumeric: "826",
+            },
+            refundId: null,
+            refundIds: [],
+            refundedTransactionId: null,
+            partialSettlementTransactionIds: [],
+            authorizedTransactionId: null,
+            settlementBatchId: "2016-08-04_exampleUSD",
+            shipping: {
+                id: null,
+                firstName: null,
+                lastName: null,
+                company: null,
+                streetAddress: null,
+                extendedAddress: null,
+                locality: null,
+                region: null,
+                postalCode: null,
+                countryName: null,
+                countryCodeAlpha2: null,
+                countryCodeAlpha3: null,
+                countryCodeNumeric: null,
+            },
+            customFields: "",
+            avsErrorResponseCode: null,
+            avsPostalCodeResponseCode: "A",
+            avsStreetAddressResponseCode: "A",
+            cvvResponseCode: "A",
+            gatewayRejectionReason: null,
+            processorAuthorizationCode: null,
+            processorResponseCode: "1002",
+            processorResponseText: "Processed",
+            additionalProcessorResponse: null,
+            voiceReferralNumber: null,
+            purchaseOrderNumber: null,
+            taxAmount: null,
+            taxExempt: false,
+            creditCard: {
+                token: "7mzhnp2",
+                bin: "411111",
+                last4: "1111",
+                cardType: "Visa",
+                expirationMonth: "07",
+                expirationYear: "2018",
+                customerLocation: "International",
+                cardholderName: null,
+                imageUrl:
+                    "https://assets.braintreegateway.com/payment_method_logo/visa.png?environment=production",
+                prepaid: "No",
+                healthcare: "No",
+                debit: "Yes",
+                durbinRegulated: "No",
+                commercial: "Unknown",
+                payroll: "No",
+                issuingBank: "HSBC Bank PLC",
+                countryOfIssuance: "GBR",
+                productId: "F",
+                uniqueNumberIdentifier: "75a85af754be161e21ffb8d584c70de8",
+                venmoSdk: false,
+                maskedNumber: "411111******1111",
+                expirationDate: "07/2018",
+            },
+            statusHistory: [
+                {
+                    timestamp: "2016-08-03T13:09:59Z",
+                    status: "submitted_for_settlement",
+                    amount: "14.90",
+                    user: "dachev@example.com",
+                    transactionSource: "control_panel",
+                },
+                {
+                    timestamp: "2016-08-03T23:42:01Z",
+                    status: "settled",
+                    amount: "14.90",
+                    user: null,
+                    transactionSource: "",
+                },
+                {
+                    timestamp: "2016-08-04T23:42:01Z",
+                    status: "voided",
+                    amount: "14.90",
+                    user: null,
+                    transactionSource: "",
+                },
+            ],
+            planId: null,
+            subscriptionId: "gzsxjb",
+            subscription: {
+                billingPeriodEndDate: null,
+                billingPeriodStartDate: null,
+            },
+            addOns: [],
+            discounts: [],
+            descriptor: {
+                name: null,
+                phone: null,
+                url: null,
+            },
+            recurring: null,
+            channel: null,
+            serviceFeeAmount: null,
+            escrowStatus: null,
+            disbursementDetails: {
+                disbursementDate: null,
+                settlementAmount: null,
+                settlementCurrencyIsoCode: null,
+                settlementCurrencyExchangeRate: null,
+                fundsHeld: null,
+                success: null,
+            },
+            disputes: [],
+            paymentInstrumentType: "credit_card",
+            processorSettlementResponseCode: "",
+            processorSettlementResponseText: "",
+            threeDSecureInfo: null,
+            paypalAccount: {},
+            coinbaseAccount: {},
+            applePayCard: {},
+            androidPayCard: {},
+        };
+
+        this.fieldsCreditCardVoided = {
+            _id: "9sc4zwjf",
+            processor: {
+                id: "9sc4zwjf",
+                state: "saved",
+            },
+            amount: "14.90",
+            refundedTransactionId: null,
+            subscriptionId: "four",
+            billing: {
+                processor: {
+                    id: "dz",
+                    state: "saved",
+                },
+                name: "Pesho Peshev",
+                company: null,
+                createdAt: undefined,
+                updatedAt: undefined,
+                country: "GB",
+                locality: "Black Lake",
+                streetAddress: "Flat 3",
+                extendedAddress: "71 - 72 Princes Gate",
+                postalCode: "BLK120",
+            },
+            customer: {
+                name: "Pesho Peshev",
+                company: null,
+                email: "keeletsang@example.com",
+                phone: "11111111111",
+            },
+            currency: "USD",
+            status: "voided",
+            statusHistory: [
+                {
+                    timestamp: "2016-08-03T13:09:59Z",
+                    status: "submitted_for_settlement",
+                    amount: "14.90",
+                    user: "dachev@example.com",
+                    transactionSource: "control_panel",
+                },
+                {
+                    timestamp: "2016-08-03T23:42:01Z",
+                    status: "settled",
+                    amount: "14.90",
+                    user: null,
+                    transactionSource: "",
+                },
+                {
+                    timestamp: "2016-08-04T23:42:01Z",
+                    status: "voided",
+                    amount: "14.90",
+                    user: null,
+                    transactionSource: "",
+                },
+            ],
+            discounts: [],
+            descriptor: {
+                name: null,
+                phone: null,
+                url: null,
+            },
+            createdAt: "2016-08-03T13:09:58Z",
+            updatedAt: "2016-08-03T23:40:08Z",
+            __t: "TransactionCreditCard",
+            maskedNumber: "411111******1111",
+            countryOfIssuance: "GBR",
+            issuingBank: "HSBC Bank PLC",
+            cardType: "Visa",
+            expirationMonth: "07",
+            expirationYear: "2018",
+        };
+
+        this.fieldsCreditCardToVoid = {
+            _id: "9sc4zwjf",
+            processor: {
+                id: "9sc4zwjf",
+                state: "saved",
+            },
+            amount: "14.90",
+            refundedTransactionId: null,
+            subscriptionId: "four",
+            billing: {
+                processor: {
+                    id: "dz",
+                    state: "saved",
+                },
+                name: "Pesho Peshev",
+                company: null,
+                createdAt: undefined,
+                updatedAt: undefined,
+                country: "GB",
+                locality: "Black Lake",
+                streetAddress: "Flat 3",
+                extendedAddress: "71 - 72 Princes Gate",
+                postalCode: "BLK120",
+            },
+            customer: {
+                name: "Pesho Peshev",
+                company: null,
+                email: "keeletsang@example.com",
+                phone: "11111111111",
+            },
+            currency: "USD",
+            status: "submitted_for_settlement",
+            statusHistory: [
+                {
+                    timestamp: "2016-08-03T13:09:59Z",
+                    status: "submitted_for_settlement",
+                    amount: "14.90",
+                    user: "dachev@example.com",
+                    transactionSource: "control_panel",
+                },
+            ],
+            discounts: [],
+            descriptor: {
+                name: null,
+                phone: null,
+                url: null,
+            },
+            createdAt: "2016-08-03T13:09:58Z",
+            updatedAt: "2016-08-03T23:40:08Z",
+            __t: "TransactionCreditCard",
+            maskedNumber: "411111******1111",
+            countryOfIssuance: "GBR",
+            issuingBank: "HSBC Bank PLC",
+            cardType: "Visa",
+            expirationMonth: "07",
+            expirationYear: "2018",
+        };
     });
 
     it("fields should map result data into a model", function() {
@@ -714,6 +1000,120 @@ describe("transactionProcessor", () => {
                         .and(sinon.match.has("action", "refunded"))
                 );
                 sinon.assert.calledOnce(gateway.transaction.refund);
+
+                assert.equal(error, apiError);
+            });
+    });
+
+    // Void
+    it("save should call void endpoint on full void transaction", function() {
+        const result = {
+            success: true,
+            transaction: this.transactionCreditCardVoided,
+        };
+        const gateway = {
+            transaction: {
+                void: sinon.stub().resolves(result),
+            },
+        };
+        const processor = {
+            gateway,
+            emit: sinon.spy(),
+        };
+
+        this.customer.transactions.push(this.fieldsCreditCardToVoid);
+
+        return transactionProcessor
+            .void(processor, this.customer, this.customer.transactions[0], null)
+            .then(customer => {
+                const voided = this.customer.transactions[0];
+                const expected = this.customer.transactions.create(this.fieldsCreditCardVoided);
+
+                sinon.assert.calledWith(
+                    processor.emit,
+                    "event",
+                    sinon.match.has("name", "transaction").and(sinon.match.has("action", "void"))
+                );
+                sinon.assert.calledWith(
+                    processor.emit,
+                    "event",
+                    sinon.match.has("name", "transaction").and(sinon.match.has("action", "voided"))
+                );
+                sinon.assert.calledOnce(gateway.transaction.void);
+
+                assert.deepEqual(voided.toObject(), expected.toObject());
+            });
+    });
+
+    it("save should reject on api failure for void", function() {
+        const result = {
+            message: "some error",
+        };
+        const gateway = {
+            transaction: {
+                void: sinon.stub().resolves(result),
+            },
+        };
+        const processor = {
+            gateway,
+            emit: sinon.spy(),
+        };
+
+        this.customer.transactions.push(this.fieldsCreditCardToVoid);
+
+        return transactionProcessor
+            .void(processor, this.customer, this.customer.transactions[0], null)
+            .then(() => {
+                assert.ok(false, "Should reject on api failure");
+            })
+            .catch(error => {
+                sinon.assert.calledWith(
+                    processor.emit,
+                    "event",
+                    sinon.match.has("name", "transaction").and(sinon.match.has("action", "void"))
+                );
+                sinon.assert.neverCalledWith(
+                    processor.emit,
+                    "event",
+                    sinon.match.has("name", "transaction").and(sinon.match.has("action", "voided"))
+                );
+                sinon.assert.calledOnce(gateway.transaction.void);
+
+                assert.equal(error.message, "some error");
+            });
+    });
+
+    it("save should reject on api failure for void", function() {
+        const apiError = new Error("error");
+        const gateway = {
+            transaction: {
+                void: sinon.stub().rejects(apiError),
+            },
+        };
+        const processor = {
+            gateway,
+            emit: sinon.spy(),
+        };
+
+        this.customer.transactions.push(this.fieldsCreditCardToVoid);
+
+        return transactionProcessor
+            .void(processor, this.customer, this.customer.transactions[0], null)
+            .then(() => {
+                assert.ok(false, "Should reject on api failure");
+            })
+            .catch(error => {
+                sinon.assert.calledWith(
+                    processor.emit,
+                    "event",
+                    sinon.match.has("name", "transaction").and(sinon.match.has("action", "void"))
+                );
+                sinon.assert.neverCalledWith(
+                    processor.emit,
+                    "event",
+                    sinon.match.has("name", "transaction").and(sinon.match.has("action", "voided"))
+                );
+                sinon.assert.calledOnce(gateway.transaction.void);
 
                 assert.equal(error, apiError);
             });

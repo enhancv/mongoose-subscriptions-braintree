@@ -128,7 +128,32 @@ function refund(processor, customer, transaction, amount) {
     }
 }
 
+function voidTransaction(processor, customer, transaction) {
+    ProcessorItem.validateIsSaved(customer);
+    ProcessorItem.validateIsSaved(transaction);
+
+    function processRefund(result) {
+        processor.emit("event", new Event(Event.TRANSACTION, Event.VOIDED, result));
+
+        customer.transactions = customer.transactions.map(
+            transaction =>
+                transaction.id === result.transaction.id
+                    ? fields(customer, result.transaction)
+                    : transaction
+        );
+        return customer;
+    }
+
+    processor.emit("event", new Event(Event.TRANSACTION, Event.VOID));
+
+    return processor.gateway.transaction
+        .void(transaction.processor.id)
+        .then(BraintreeError.guard)
+        .then(processRefund);
+}
+
 module.exports = {
     fields: curry(fields),
     refund: curry(refund),
+    void: curry(voidTransaction),
 };
